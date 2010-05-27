@@ -74,16 +74,16 @@ public class Proyecto extends javax.swing.JFrame {
 	/**
 	* Auto-generated main method to display this JFrame
 	*/
-	public static void main(String[] args) {/*
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				Proyecto inst = new Proyecto(null, null);
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});*/
-		Main.main(null);
-	}
+//	public static void main(String[] args) {/*
+//		SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//				Proyecto inst = new Proyecto(null, null);
+//				inst.setLocationRelativeTo(null);
+//				inst.setVisible(true);
+//			}
+//		});*/
+//		Main.main(null);
+//	}
 	
 	
 	public Proyecto(Main parent, Conexion dbConnection) {
@@ -95,12 +95,15 @@ public class Proyecto extends javax.swing.JFrame {
 		populateList();
 	}
 	
+	public Main getMain(){
+		return frmPrincipal;
+	}
 	private void initGUI() {
 		try {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			this.setTitle("Project Manager: Proyecto");
 			getContentPane().setLayout(null);
-			this.setPreferredSize(new java.awt.Dimension(674, 354));
+			this.setPreferredSize(new java.awt.Dimension(674, 304));
 			this.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent evt) {
 					thisWindowClosing(evt);
@@ -262,7 +265,7 @@ public class Proyecto extends javax.swing.JFrame {
 				btnCancel = new JButton();
 				getContentPane().add(btnCancel);
 				btnCancel.setText("Cancelar");
-				btnCancel.setBounds(562, 280, 92, 21);
+				btnCancel.setBounds(562, 241, 92, 21);
 				btnCancel.setFont(new java.awt.Font("Tahoma",0,10));
 				btnCancel.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -274,7 +277,7 @@ public class Proyecto extends javax.swing.JFrame {
 				btnOk = new JButton();
 				getContentPane().add(btnOk);
 				btnOk.setText("Guardar Cambios");
-				btnOk.setBounds(404, 280, 146, 21);
+				btnOk.setBounds(404, 241, 146, 21);
 				btnOk.setFont(new java.awt.Font("Tahoma",0,10));
 				btnOk.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -296,7 +299,7 @@ public class Proyecto extends javax.swing.JFrame {
 				lstProyectos = new JList();
 				getContentPane().add(lstProyectos);
 				lstProyectos.setModel(lstProyectosModel);
-				lstProyectos.setBounds(296, 40, 192, 227);
+				lstProyectos.setBounds(296, 40, 192, 189);
 				lstProyectos.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				lstProyectos.setFont(new java.awt.Font("Arial",0,10));
 				lstProyectos.addListSelectionListener(new ListSelectionListener() {
@@ -310,7 +313,7 @@ public class Proyecto extends javax.swing.JFrame {
 				getContentPane().add(btnEliminar);
 				btnEliminar.setText("Eliminar Proyecto");
 				btnEliminar.setFont(new java.awt.Font("Tahoma",0,10));
-				btnEliminar.setBounds(261, 280, 131, 21);
+				btnEliminar.setBounds(261, 241, 131, 21);
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						btnEliminarActionPerformed(evt);
@@ -323,6 +326,11 @@ public class Proyecto extends javax.swing.JFrame {
 				btnAdminEvento.setText("Administrar Evento");
 				btnAdminEvento.setFont(new java.awt.Font("Tahoma",0,10));
 				btnAdminEvento.setBounds(500, 38, 154, 21);
+				btnAdminEvento.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnAdminEventoActionPerformed(evt);
+					}
+				});
 			}
 			{
 				btnAdminTarea = new JButton();
@@ -339,7 +347,7 @@ public class Proyecto extends javax.swing.JFrame {
 				btnAdimnGrupo.setBounds(500, 91, 154, 21);
 			}
 			pack();
-			this.setSize(674, 354);
+			this.setSize(674, 304);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -424,7 +432,7 @@ public class Proyecto extends javax.swing.JFrame {
 		return projName;
 	}
 	
-	private boolean esBisiesto(int year) {
+	public static boolean esBisiesto(int year) {
 	    return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
 	}
 	
@@ -639,6 +647,13 @@ public class Proyecto extends javax.swing.JFrame {
 		System.out.println("btnCancel.actionPerformed, event="+evt);
 		frmPrincipal.setVisible(true);
 		this.dispose();
+	}
+	
+	private void btnAdminEventoActionPerformed(ActionEvent evt) {
+		//System.out.println("btnAdminEvento.actionPerformed, event="+evt);
+		this.setVisible(false);
+		Evento evento = new Evento(this,conexionDB);
+		evento.setVisible(true);
 	}
 
 }

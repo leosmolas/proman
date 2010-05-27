@@ -132,6 +132,7 @@ public class login extends javax.swing.JFrame {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void btnAceptarActionPerformed(ActionEvent evt) {
 		if (txtUsuario.getText().equals("") || txtContraseña.getText().equals("")){
 			JOptionPane.showMessageDialog(this, "Ingrese nombre de usuario y password!", "Error al ingresar al sistema", JOptionPane.ERROR_MESSAGE);
@@ -159,8 +160,7 @@ public class login extends javax.swing.JFrame {
 		        	JOptionPane.showMessageDialog(this, "El nombre de usuario o el password es incorrecto.", "Error al ingresar al sistema", JOptionPane.ERROR_MESSAGE);
 		        	txtUsuario.setText("");
 		        	txtContraseña.setText("");
-		        }
-		        
+		        }		        
 				stmt.close();
 				conexionDB.desconectarBD();
 				
@@ -178,6 +178,7 @@ public class login extends javax.swing.JFrame {
 		this.dispose();
 	}
 	
+	//PREGUNTA: ¿Qué es esto?
 	private void thisWindowIconified(WindowEvent evt) {
 		System.out.println("this.windowIconified, event="+evt);
 		//TODO add your code for this.windowIconified
