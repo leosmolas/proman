@@ -1,0 +1,38 @@
+"Proyecto";;;;
+"ID";1;;;
+"Nombre";"SAP Librería";;;
+"Descripción";"Administración de una librería";;;
+"Fecha de Inicio";07/07/10;;;
+"Fecha de Fin";05/12/10;;;
+"Estado";"Pendiente";;;
+;;;;
+"Tareas";;;;
+"ID";"Descripción";"Fecha de Inicio";"Fecha de Fin";"Grupo Asignado"
+1;"Crear ABM de “libro”";05/07/10;01/08/10;2
+2;"Crear ABM de “Estantería”";07/07/10;07/08/10;1
+;;;;
+;;;;
+"Grupo";;;;
+"ID";"Descripción";;;
+1;"Grupo de programación 1";;;
+2;"Grupo de programación 2";;;
+;;;;
+;;;;
+"Usuarios";;;;
+"Nombre";"ID";"E-mail";;
+"Juan Perez";1;"juan@perez.com";;
+"José Gonzalez";2;"jose@gonzalez.com";;
+;;;;
+;;;;
+"Rol";;;;
+"Nombre del usuario";"ID del grupo";"Descripción";;
+"Juan Perez";1;"Programador Junior";;
+"José Gonzalez";1;"Programador Senior";;
+"Juan Perez";2;"Programador Junior";;
+"José Gonzalez";2;"Programador Senior";;
+;;;;
+;;;;
+"Eventos";;;;
+"ID";"Nombre";"Descripción";"Fecha";
+1;"Inicialización";"Inicia el proyecto";01/07/10;
+2;"Reunión 1";"Reunión";02/07/10;
