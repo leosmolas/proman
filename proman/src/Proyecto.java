@@ -443,10 +443,6 @@ public class Proyecto extends javax.swing.JFrame {
 		return projName;
 	}
 	
-	private boolean esBisiesto(int year) {
-	    return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
-	}
-	
 	public String getCurrentProjectID(){
 		String selectedProj = lstProyectos.getModel().getElementAt(lstProyectos.getSelectedIndex()).toString();
 		String projID = selectedProj.substring(0, selectedProj.indexOf('-'));
@@ -496,53 +492,20 @@ public class Proyecto extends javax.swing.JFrame {
 		}
 	}
 	
-	private void updateDias(JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAño){
-		String mes = cbxMes.getModel().getElementAt(cbxMes.getSelectedIndex()).toString(); 
-		if(mes == "Enero" || mes == "Marzo" || mes == "Mayo" || mes == "Julio" || mes == "Agosto" || mes == "Octubre" || mes == "Diciembre"){
-			String dias[] = new String[31];
-			for(int i = 1; i<=31;i++){
-				dias[i-1] = "" + i;
-			}
-			cbxDia.setModel(new DefaultComboBoxModel(dias));
-		}else{
-			if(mes == "Abril" || mes == "Junio" || mes == "Septiembre" || mes == "Noviembre"){
-				String dias[] = new String[30];
-				for(int i = 1; i<=30;i++){
-					dias[i-1] = "" + i;
-				}
-				cbxDia.setModel(new DefaultComboBoxModel(dias));
-			}else{
-				if (esBisiesto(Integer.parseInt(cbxAño.getModel().getElementAt(cbxAño.getSelectedIndex()).toString()))){
-					String dias[] = new String[29];
-					for(int i = 1; i<=29;i++){
-						dias[i-1] = "" + i;
-					}
-					cbxDia.setModel(new DefaultComboBoxModel(dias));
-				}else{
-					String dias[] = new String[28];
-					for(int i = 1; i<=28;i++){
-						dias[i-1] = "" + i;
-					}
-					cbxDia.setModel(new DefaultComboBoxModel(dias));
-				}
-			}
-		}
-	}
-	
 	private void cbxInicioMesActionPerformed(ActionEvent evt) {
-		updateDias(cbxInicioDia, cbxInicioMes, cbxInicioAño);
+		Utils.updateDias(cbxInicioDia, cbxInicioMes, cbxInicioAño);
 	}
 	
 	private void cbxInicioAñoActionPerformed(ActionEvent evt) {
-		updateDias(cbxInicioDia, cbxInicioMes, cbxInicioAño);
+		Utils.updateDias(cbxInicioDia, cbxInicioMes, cbxInicioAño);
 	}
 	
 	private void cbxFinMesActionPerformed(ActionEvent evt) {
-		updateDias(cbxFinDia, cbxFinMes, cbxFinAño);
+		Utils.updateDias(cbxFinDia, cbxFinMes, cbxFinAño);
 	}
 	
 	private void cbxFinAñoActionPerformed(ActionEvent evt) {
-		updateDias(cbxFinDia, cbxFinMes, cbxFinAño);
+		Utils.updateDias(cbxFinDia, cbxFinMes, cbxFinAño);
 	}
 	
 	private boolean validarFecha(){
@@ -564,20 +527,15 @@ public class Proyecto extends javax.swing.JFrame {
 				else return false;
 	}
 	
-	private String makeDate(JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAño){
-		return (cbxAño.getModel().getElementAt(cbxAño.getSelectedIndex()).toString() +"-"+ (cbxMes.getSelectedIndex()+1) + "-" + (cbxDia.getSelectedIndex()+1));
-	}
-	
 	private void btnOkActionPerformed(ActionEvent evt) {
 		if (validarFecha()){
-			System.out.println("Fechas en orden. Current Project ID = " + getCurrentProjectID());
 			if (getCurrentProjectID().equals("0")){
 				//estamos creando un proyecto nuevo
 				try {					
 					Date date = Calendar.getInstance().getTime();
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					String currentDate = sdf.format(date);
-					if (currentDate.compareTo(makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
+					if (currentDate.compareTo(Utils.makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
 						String userID = frmPrincipal.getCurrentUserID();
 						conexionDB.conectarBD();
 						Statement stmt = conexionDB.statement();
@@ -585,8 +543,8 @@ public class Proyecto extends javax.swing.JFrame {
 							userID + ",'" + 
 							txtNombre.getText() + "','" +
 							edpDescripcion.getText() + "','" +
-							makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
-							makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
+							Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
+							Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
 						System.out.println(query);
 						stmt.executeUpdate(query);
 						stmt.close();
@@ -608,8 +566,8 @@ public class Proyecto extends javax.swing.JFrame {
 					String query = "update proyectos set "+ 
 						"nombre = '" + txtNombre.getText() + "', " +
 						"descripcion = '" + edpDescripcion.getText() + "', " +
-						"fecha_inicio = '" + makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "', " +
-						"fecha_fin = '" + makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "', " + 
+						"fecha_inicio = '" + Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "', " +
+						"fecha_fin = '" + Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "', " + 
 						"estado = '" + cbxEstado.getSelectedItem().toString() +
 						"' where id_proyecto = " + getCurrentProjectID();
 					System.out.println(query);
