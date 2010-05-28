@@ -45,4 +45,8 @@ public class Utils {
 		cbxMes.setSelectedIndex(Integer.parseInt(yyyyMMdd.substring(5,7))-1);
 		cbxDia.setSelectedIndex(Integer.parseInt(yyyyMMdd.substring(8))-1);
 	}
+	
+	public static String makeDate(JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAño){
+		return (cbxAño.getModel().getElementAt(cbxAño.getSelectedIndex()).toString() +"-"+ (cbxMes.getSelectedIndex()+1) + "-" + (cbxDia.getSelectedIndex()+1));
+	}
 }
