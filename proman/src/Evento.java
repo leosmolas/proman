@@ -116,6 +116,13 @@ public class Evento extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	private void setDate(String yyyyMMdd, JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAnio){
+		//formato de fecha de entrada: yyyy-MM-dd
+		cbxAnio.setSelectedItem(yyyyMMdd.substring(0, 4));
+		cbxMes.setSelectedIndex(Integer.parseInt(yyyyMMdd.substring(5,7))-1);
+		cbxDia.setSelectedIndex(Integer.parseInt(yyyyMMdd.substring(8))-1);
+	}
 
 	private void initGUI() {
 		try {
