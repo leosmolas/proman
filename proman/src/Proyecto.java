@@ -432,10 +432,6 @@ public class Proyecto extends javax.swing.JFrame {
 		return projName;
 	}
 	
-	public static boolean esBisiesto(int year) {
-	    return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
-	}
-	
 	public String getCurrentProjectID(){
 		String selectedProj = lstProyectos.getModel().getElementAt(lstProyectos.getSelectedIndex()).toString();
 		String projID = selectedProj.substring(0, selectedProj.indexOf('-'));
@@ -485,6 +481,7 @@ public class Proyecto extends javax.swing.JFrame {
 		}
 	}
 	
+	//este procedimiento lo paso a Utils y lo parametrizo. Pero no lo borro...
 	private void updateDiasInicio(){
 		String mes = cbxInicioMes.getModel().getElementAt(cbxInicioMes.getSelectedIndex()).toString(); 
 		if(mes == "Enero" || mes == "Marzo" || mes == "Mayo" || mes == "Julio" || mes == "Agosto" || mes == "Octubre" || mes == "Diciembre"){
@@ -501,7 +498,7 @@ public class Proyecto extends javax.swing.JFrame {
 				}
 				cbxInicioDia.setModel(new DefaultComboBoxModel(dias));
 			}else{
-				if (esBisiesto(Integer.parseInt(cbxInicioAño.getModel().getElementAt(cbxInicioAño.getSelectedIndex()).toString()))){
+				if (Utils.esBisiesto(Integer.parseInt(cbxInicioAño.getModel().getElementAt(cbxInicioAño.getSelectedIndex()).toString()))){
 					String dias[] = new String[29];
 					for(int i = 1; i<=29;i++){
 						dias[i-1] = "" + i;
@@ -542,7 +539,7 @@ public class Proyecto extends javax.swing.JFrame {
 				}
 				cbxFinDia.setModel(new DefaultComboBoxModel(dias));
 			}else{
-				if (esBisiesto(Integer.parseInt(cbxFinAño.getModel().getElementAt(cbxFinAño.getSelectedIndex()).toString()))){
+				if (Utils.esBisiesto(Integer.parseInt(cbxFinAño.getModel().getElementAt(cbxFinAño.getSelectedIndex()).toString()))){
 					String dias[] = new String[29];
 					for(int i = 1; i<=29;i++){
 						dias[i-1] = "" + i;
