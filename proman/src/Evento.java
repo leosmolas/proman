@@ -60,6 +60,7 @@ public class Evento extends javax.swing.JFrame {
 	
 	private Conexion conexionDB;
 	private JFrame frmParent;
+	private String idProyecto;
 
 //	/**
 //	* Auto-generated main method to display this JFrame
@@ -74,13 +75,15 @@ public class Evento extends javax.swing.JFrame {
 //		});
 //	}
 //	
-	public Evento(JFrame parent,Conexion dbConnection) {
+	public Evento(JFrame parent,Conexion dbConnection,String proy,String id) {
 		super();
 		initGUI();
 		
 		conexionDB = dbConnection;
 		frmParent = parent;
+		idProyecto = id;
 		populateList();
+		this.setTitle("Proyect Manager: Eventos del Proyecto " + proy);
 	}
 	
 	private void populateList() {
@@ -88,7 +91,7 @@ public class Evento extends javax.swing.JFrame {
 		try {
 			conexionDB.conectarBD();			
 			Statement stmt = conexionDB.statement();			
-			String query = "select id_evento, nombre from eventos";
+			String query = "select id_evento, nombre from eventos where proyecto = "+idProyecto;
 			
 			ResultSet rs = stmt.executeQuery(query);
 			
@@ -118,7 +121,7 @@ public class Evento extends javax.swing.JFrame {
 		try {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			getContentPane().setLayout(null);
-			this.setTitle("Proyect Manager: Eventos del Proyecto SAP Librería");
+			
 			this.setPreferredSize(new java.awt.Dimension(483, 252));
 			String[] anios = new String[90];
 			for(int i=0;i<90;i++){
@@ -292,6 +295,8 @@ public class Evento extends javax.swing.JFrame {
 					txtNombre.setText(evName);
 					edpDescripcion.setText(rs.getString("descripcion"));
 					fecha = rs.getDate("fecha");
+					
+					//TODO ESTO NO ESTA ANDANDO
 					cal = Calendar.getInstance();
 					cal.setTime(fecha);
 					cbxFechaDia.setSelectedIndex(cal.DAY_OF_MONTH-1);

@@ -652,7 +652,7 @@ public class Proyecto extends javax.swing.JFrame {
 	private void btnAdminEventoActionPerformed(ActionEvent evt) {
 		//System.out.println("btnAdminEvento.actionPerformed, event="+evt);
 		this.setVisible(false);
-		Evento evento = new Evento(this,conexionDB);
+		Evento evento = new Evento(this,conexionDB,getCurrentProjectName(),getCurrentProjectID());
 		evento.setVisible(true);
 	}
 
