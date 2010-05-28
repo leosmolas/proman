@@ -5,9 +5,6 @@ import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -48,6 +45,10 @@ public class Evento extends javax.swing.JFrame {
 	private JEditorPane edpDescripcion;
 	private JLabel lblEvento;
 	private JLabel lblID;
+	private JLabel lblDosPuntos;
+	private JComboBox cbxMin;
+	private JComboBox cbxHora;
+	private JLabel lblHora;
 	private JButton btnEliminar;
 	private JList lstEventos;
 	private JTextField txtID;
@@ -62,6 +63,8 @@ public class Evento extends javax.swing.JFrame {
 	private Conexion conexionDB;
 	private JFrame frmParent;
 	private String idProyecto;
+	private String inicioProy;
+	private String finProy;
 
 //	/**
 //	* Auto-generated main method to display this JFrame
@@ -76,7 +79,7 @@ public class Evento extends javax.swing.JFrame {
 //		});
 //	}
 //	
-	public Evento(JFrame parent,Conexion dbConnection,String proy,String id) {
+	public Evento(JFrame parent,Conexion dbConnection,String proy,String id,String inicioProy, String finProy) {
 		super();
 		initGUI();
 		
@@ -84,6 +87,8 @@ public class Evento extends javax.swing.JFrame {
 		frmParent = parent;
 		idProyecto = id;
 		populateList();
+		this.inicioProy = inicioProy;
+		this.finProy = finProy;
 		this.setTitle("Proyect Manager: Eventos del Proyecto " + proy);
 	}
 	
@@ -123,7 +128,7 @@ public class Evento extends javax.swing.JFrame {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			getContentPane().setLayout(null);
 			
-			this.setPreferredSize(new java.awt.Dimension(483, 252));
+			this.setPreferredSize(new java.awt.Dimension(483, 294));
 			String[] anios = new String[90];
 			for(int i=0;i<90;i++){
 				int aux = i+2010;
@@ -138,7 +143,7 @@ public class Evento extends javax.swing.JFrame {
 				btnCancel = new JButton();
 				getContentPane().add(btnCancel);
 				btnCancel.setText("Cancelar");
-				btnCancel.setBounds(377, 189, 86, 21);
+				btnCancel.setBounds(377, 231, 86, 21);
 				btnCancel.setFont(new java.awt.Font("Arial",0,10));
 				btnCancel.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -150,7 +155,7 @@ public class Evento extends javax.swing.JFrame {
 				btnOk = new JButton();
 				getContentPane().add(btnOk);
 				btnOk.setText("Guardar Evento");
-				btnOk.setBounds(218, 189, 147, 21);
+				btnOk.setBounds(218, 231, 147, 21);
 				btnOk.setFont(new java.awt.Font("Arial",0,10));
 				btnOk.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -269,11 +274,43 @@ public class Evento extends javax.swing.JFrame {
 				getContentPane().add(btnEliminar);
 				btnEliminar.setText("Eliminar Evento");
 				btnEliminar.setFont(new java.awt.Font("Arial",0,10));
-				btnEliminar.setBounds(52, 189, 154, 21);
+				btnEliminar.setBounds(52, 231, 154, 21);
+			}
+			{
+				lblHora = new JLabel();
+				getContentPane().add(lblHora);
+				lblHora.setText("Hora de Inicio");
+				lblHora.setBounds(18, 186, 72, 14);
+				lblHora.setFont(new java.awt.Font("Arial",0,10));
+			}
+			{
+				ComboBoxModel cbxHoraModel = 
+					new DefaultComboBoxModel(Utils.horas());
+				cbxHora = new JComboBox();
+				getContentPane().add(cbxHora);
+				cbxHora.setModel(cbxHoraModel);
+				cbxHora.setBounds(96, 183, 49, 21);
+				cbxHora.setFont(new java.awt.Font("Arial",0,10));
+				cbxHora.setSelectedIndex(12);
+			}
+			{
+				ComboBoxModel cbxMinModel = 
+					new DefaultComboBoxModel(Utils.minutos());
+				cbxMin = new JComboBox();
+				getContentPane().add(cbxMin);
+				cbxMin.setModel(cbxMinModel);
+				cbxMin.setBounds(158, 183, 49, 21);
+				cbxMin.setFont(new java.awt.Font("Arial",0,10));
+			}
+			{
+				lblDosPuntos = new JLabel();
+				getContentPane().add(lblDosPuntos);
+				lblDosPuntos.setText(":");
+				lblDosPuntos.setBounds(149, 186, 10, 14);
 			}
 			Utils.updateDias(cbxFechaDia, cbxFechaMes, cbxFechaAño);
 			pack();
-			this.setSize(483, 252);
+			this.setSize(483, 294);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -351,28 +388,32 @@ public class Evento extends javax.swing.JFrame {
 	}
 	
 	private void btnOkActionPerformed(ActionEvent evt) {
+		String fecha = Utils.makeDate(cbxFechaDia,cbxFechaMes,cbxFechaAño);
+		String evID = getCurrentEventtID();
 		System.out.println("btnOk.actionPerformed, event="+evt);
-		if (getCurrentEventtID().equals("0")){
+		if (evID.equals("0")){
 			//estamos creando un proyecto nuevo
 			try {					
-				Date date = Calendar.getInstance().getTime();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				String currentDate = sdf.format(date);
-				String userID = frmPrincipal.getCurrentUserID();
-				if (currentDate.compareTo(makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
-					System.out.println("Fechita re ok");
-					conexionDB.conectarBD();
-					Statement stmt = conexionDB.statement();
-					String query = "insert into proyectos (jefe, nombre, descripcion, fecha_inicio, fecha_fin, estado) values ("+
-						userID + ",'" + 
-						txtNombre.getText() + "','" +
-						edpDescripcion.getText() + "','" +
-						makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
-						makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
-					System.out.println(query);
-					stmt.executeUpdate(query);
-					stmt.close();
-					conexionDB.desconectarBD();
+				//TODO revisar si esto esta andando, con lo de diego
+				if (inicioProy.compareTo(fecha) <= 0){
+					if (fecha.compareTo(finProy) <= 0) {
+						//System.out.println("Fechita re ok");
+						conexionDB.conectarBD();
+						Statement stmt = conexionDB.statement();
+						String query = "insert into eventos (proyecto, fecha, descripcion, hora_inicio, nombre) values ("+
+							idProyecto + ",'" + 
+							fecha + "','" +
+							edpDescripcion.getText() + "','" +
+							cbxHora.getSelectedItem() + ":" + cbxMin.getSelectedItem() + ":00','" +
+							txtNombre.getText() + "')";
+						System.out.println("query: " + query);
+						stmt.executeUpdate(query);
+						stmt.close();
+						conexionDB.desconectarBD();
+					}
+					else {
+						//TODO el evento esta despues del fin del proy
+					}
 				}else{
 					JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior a la actual.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
 				}
@@ -384,5 +425,6 @@ public class Evento extends javax.swing.JFrame {
 		}else{
 			//TODO modificar 
 		}
+		populateList();
 	}
 }

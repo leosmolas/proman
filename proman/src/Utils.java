@@ -49,4 +49,22 @@ public class Utils {
 	public static String makeDate(JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAño){
 		return (cbxAño.getModel().getElementAt(cbxAño.getSelectedIndex()).toString() +"-"+ (cbxMes.getSelectedIndex()+1) + "-" + (cbxDia.getSelectedIndex()+1));
 	}
+	
+	public static String[] horas() {
+		int i;
+		String [] aux = new String [24];
+		for (i=0;i<24;i++) {
+			aux[i] = String.valueOf(i); 
+		}
+		return aux;
+	}
+	
+	public static String[] minutos() {
+		int i;
+		String [] aux = new String [60];
+		for (i=0;i<60;i++) {
+			aux[i] = String.valueOf(i); 
+		}
+		return aux;
+	}
 }
