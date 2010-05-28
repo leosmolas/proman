@@ -374,7 +374,7 @@ public class Proyecto extends javax.swing.JFrame {
 			stringArr[i] = "0-CREAR NUEVO PROYECTO"; 
 			
 			lstProyectos.setModel(new DefaultComboBoxModel(stringArr));
-			
+			lstProyectos.setSelectedIndex(0);
 			stmt.close();
 			conexionDB.desconectarBD();
 			
@@ -651,9 +651,17 @@ public class Proyecto extends javax.swing.JFrame {
 	
 	private void btnAdminEventoActionPerformed(ActionEvent evt) {
 		//System.out.println("btnAdminEvento.actionPerformed, event="+evt);
-		this.setVisible(false);
-		Evento evento = new Evento(this,conexionDB,getCurrentProjectName(),getCurrentProjectID());
-		evento.setVisible(true);
+		String id = getCurrentProjectID();
+		if (!id.equals("0")){
+			this.setVisible(false);
+			
+			Evento evento = new Evento(this,conexionDB,getCurrentProjectName(),id);
+			evento.setVisible(true);
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún proyecto.", 
+											"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
+		}
 	}
 
 }

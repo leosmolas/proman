@@ -108,7 +108,7 @@ public class Evento extends javax.swing.JFrame {
 			stringArr[i] = "0-CREAR NUEVO EVENTO"; 
 			
 			lstEventos.setModel(new DefaultComboBoxModel(stringArr));
-			
+			lstEventos.setSelectedIndex(0);
 			stmt.close();
 			conexionDB.desconectarBD();
 			
