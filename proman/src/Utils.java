@@ -6,7 +6,7 @@ public class Utils {
 	    return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
 	}
 	
-	public void updateDias(JComboBox cbxDia,JComboBox cbxMes,JComboBox cbxaño){
+	public static void updateDias(JComboBox cbxDia,JComboBox cbxMes,JComboBox cbxaño){
 		String mes = cbxMes.getModel().getElementAt(cbxMes.getSelectedIndex()).toString(); 
 		if(mes == "Enero" || mes == "Marzo" || mes == "Mayo" || mes == "Julio" || mes == "Agosto" || mes == "Octubre" || mes == "Diciembre"){
 			String dias[] = new String[31];

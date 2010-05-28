@@ -116,13 +116,6 @@ public class Evento extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 	}
-	
-	private void setDate(String yyyyMMdd, JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAnio){
-		//formato de fecha de entrada: yyyy-MM-dd
-		cbxAnio.setSelectedItem(yyyyMMdd.substring(0, 4));
-		cbxMes.setSelectedIndex(Integer.parseInt(yyyyMMdd.substring(5,7))-1);
-		cbxDia.setSelectedIndex(Integer.parseInt(yyyyMMdd.substring(8))-1);
-	}
 
 	private void initGUI() {
 		try {
@@ -272,7 +265,7 @@ public class Evento extends javax.swing.JFrame {
 				btnEliminar.setFont(new java.awt.Font("Arial",0,10));
 				btnEliminar.setBounds(52, 189, 154, 21);
 			}
-			updateDias();
+			Utils.updateDias(cbxFechaDia, cbxFechaMes, cbxFechaAño);
 			pack();
 			this.setSize(483, 252);
 		} catch (Exception e) {
@@ -305,7 +298,7 @@ public class Evento extends javax.swing.JFrame {
 					txtID.setText(evID);
 					txtNombre.setText(evName);
 					edpDescripcion.setText(rs.getString("descripcion"));
-					setDate(rs.getString("fecha"), cbxFechaDia, cbxFechaMes, cbxFechaAño);
+					Utils.setDate(rs.getString("fecha"), cbxFechaDia, cbxFechaMes, cbxFechaAño);
 				}else{
 					txtID.setText("");
 					txtNombre.setText("Nuevo Evento");
@@ -341,41 +334,8 @@ public class Evento extends javax.swing.JFrame {
 		return projName;
 	}
 	
-	private void updateDias(){
-		String mes = cbxFechaMes.getModel().getElementAt(cbxFechaMes.getSelectedIndex()).toString(); 
-		if(mes == "Enero" || mes == "Marzo" || mes == "Mayo" || mes == "Julio" || mes == "Agosto" || mes == "Octubre" || mes == "Diciembre"){
-			String dias[] = new String[31];
-			for(int i = 1; i<=31;i++){
-				dias[i-1] = "" + i;
-			}
-			cbxFechaDia.setModel(new DefaultComboBoxModel(dias));
-		}else{
-			if(mes == "Abril" || mes == "Junio" || mes == "Septiembre" || mes == "Noviembre"){
-				String dias[] = new String[30];
-				for(int i = 1; i<=30;i++){
-					dias[i-1] = "" + i;
-				}
-				cbxFechaDia.setModel(new DefaultComboBoxModel(dias));
-			}else{
-				if (Utils.esBisiesto(Integer.parseInt(cbxFechaAño.getModel().getElementAt(cbxFechaAño.getSelectedIndex()).toString()))){
-					String dias[] = new String[29];
-					for(int i = 1; i<=29;i++){
-						dias[i-1] = "" + i;
-					}
-					cbxFechaDia.setModel(new DefaultComboBoxModel(dias));
-				}else{
-					String dias[] = new String[28];
-					for(int i = 1; i<=28;i++){
-						dias[i-1] = "" + i;
-					}
-					cbxFechaDia.setModel(new DefaultComboBoxModel(dias));
-				}
-			}
-		}
-	}
-	
 	private void cbxFechaMesActionPerformed(ActionEvent evt) {
-		updateDias();
+		Utils.updateDias(cbxFechaDia, cbxFechaMes, cbxFechaAño);
 	}
 	
 	private void btnCancelActionPerformed(ActionEvent evt) {
