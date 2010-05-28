@@ -357,7 +357,7 @@ public class Evento extends javax.swing.JFrame {
 				}
 				cbxFechaDia.setModel(new DefaultComboBoxModel(dias));
 			}else{
-				if (Proyecto.esBisiesto(Integer.parseInt(cbxFechaAño.getModel().getElementAt(cbxFechaAño.getSelectedIndex()).toString()))){
+				if (Utils.esBisiesto(Integer.parseInt(cbxFechaAño.getModel().getElementAt(cbxFechaAño.getSelectedIndex()).toString()))){
 					String dias[] = new String[29];
 					for(int i = 1; i<=29;i++){
 						dias[i-1] = "" + i;
