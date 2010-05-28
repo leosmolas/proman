@@ -89,7 +89,7 @@ public class Evento extends javax.swing.JFrame {
 		populateList();
 		this.inicioProy = inicioProy;
 		this.finProy = finProy;
-		this.setTitle("Proyect Manager: Eventos del Proyecto " + proy);
+		this.setTitle("Project Manager: Eventos del Proyecto " + proy);
 	}
 	
 	private void populateList() {
@@ -275,6 +275,11 @@ public class Evento extends javax.swing.JFrame {
 				btnEliminar.setText("Eliminar Evento");
 				btnEliminar.setFont(new java.awt.Font("Arial",0,10));
 				btnEliminar.setBounds(52, 231, 154, 21);
+				btnEliminar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnEliminarActionPerformed(evt);
+					}
+				});
 			}
 			{
 				lblHora = new JLabel();
@@ -323,35 +328,39 @@ public class Evento extends javax.swing.JFrame {
 	
 	private void lstEventosValueChanged(ListSelectionEvent evt) {
 //		System.out.println("lstEventos.valueChanged, event="+evt);
-		String evName = getCurrentEventName();
-		String evID   = getCurrentEventtID();
-
-		if (evID.equals("0")){
-			//si seleccionó para crear un nuevo evento
-			cleanForm();
-		} else {			
-			try {
-				conexionDB.conectarBD();
-				Statement stmt = conexionDB.statement();
-				
-				String query = "select fecha, hora_inicio, nombre, descripcion from eventos where id_evento = " + evID;
-				ResultSet rs = stmt.executeQuery(query);
-				
-				if(rs.next()){
-					txtID.setText(evID);
-					txtNombre.setText(evName);
-					edpDescripcion.setText(rs.getString("descripcion"));
-					Utils.setDate(rs.getString("fecha"), cbxFechaDia, cbxFechaMes, cbxFechaAño);
-				}else{
-					txtID.setText("");
-					txtNombre.setText("Nuevo Evento");
-					edpDescripcion.setText("");
+		String evName , evID;
+		
+		if (lstEventos.getSelectedIndices().length>0) {
+			evName = getCurrentEventName();
+			evID   = getCurrentEventtID();
+	
+			if (evID.equals("0")){
+				//si seleccionó para crear un nuevo evento
+				cleanForm();
+			} else {			
+				try {
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
+					
+					String query = "select fecha, hora_inicio, nombre, descripcion from eventos where id_evento = " + evID;
+					ResultSet rs = stmt.executeQuery(query);
+					
+					if(rs.next()){
+						txtID.setText(evID);
+						txtNombre.setText(evName);
+						edpDescripcion.setText(rs.getString("descripcion"));
+						Utils.setDate(rs.getString("fecha"), cbxFechaDia, cbxFechaMes, cbxFechaAño);
+					}else{
+						txtID.setText("");
+						txtNombre.setText("Nuevo Evento");
+						edpDescripcion.setText("");
+					}
+					rs.close();
+					conexionDB.desconectarBD();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				rs.close();
-				conexionDB.desconectarBD();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}
@@ -412,10 +421,10 @@ public class Evento extends javax.swing.JFrame {
 						conexionDB.desconectarBD();
 					}
 					else {
-						//TODO el evento esta despues del fin del proy
+						JOptionPane.showMessageDialog(this, "La fecha no puede ser posterior al fin del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
 					}
 				}else{
-					JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior a la actual.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior al comienzo del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
 				}
 				
 			} catch (SQLException e) {
@@ -425,6 +434,34 @@ public class Evento extends javax.swing.JFrame {
 		}else{
 			//TODO modificar 
 		}
+		
 		populateList();
+	}
+	
+	private void btnEliminarActionPerformed(ActionEvent evt) {
+		String evID   = getCurrentEventtID();
+		String evName = getCurrentEventName();
+		int ok;
+		if (evID.equals("0")) {
+			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún evento para eliminar!.", "¡Cuidado!", JOptionPane.WARNING_MESSAGE);
+		}
+		else {
+			ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea eliminar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (ok == JOptionPane.OK_OPTION) {
+				try {
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
+					String query = "DELETE FROM eventos WHERE id_evento = " + evID;
+					System.out.println("delete: " + query);
+					stmt.executeUpdate(query);
+					stmt.close();
+					conexionDB.desconectarBD();
+					populateList();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
