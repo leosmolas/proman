@@ -146,6 +146,11 @@ public class Evento extends javax.swing.JFrame {
 				btnCancel.setText("Cancelar");
 				btnCancel.setBounds(377, 189, 86, 21);
 				btnCancel.setFont(new java.awt.Font("Arial",0,10));
+				btnCancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnCancelActionPerformed(evt);
+					}
+				});
 			}
 			{
 				btnOk = new JButton();
@@ -284,8 +289,7 @@ public class Evento extends javax.swing.JFrame {
 //		System.out.println("lstEventos.valueChanged, event="+evt);
 		String evName = getCurrentEventName();
 		String evID   = getCurrentEventtID();
-		Date fecha;
-		Calendar cal;
+
 		if (evID.equals("0")){
 			//si seleccionó para crear un nuevo evento
 			cleanForm();
@@ -301,14 +305,7 @@ public class Evento extends javax.swing.JFrame {
 					txtID.setText(evID);
 					txtNombre.setText(evName);
 					edpDescripcion.setText(rs.getString("descripcion"));
-					fecha = rs.getDate("fecha");
-					
-					//TODO ESTO NO ESTA ANDANDO
-					cal = Calendar.getInstance();
-					cal.setTime(fecha);
-					cbxFechaDia.setSelectedIndex(cal.DAY_OF_MONTH-1);
-					cbxFechaMes.setSelectedIndex(cal.MONTH-1);
-					cbxFechaAño.setSelectedItem(cal.YEAR +"");
+					setDate(rs.getString("fecha"), cbxFechaDia, cbxFechaMes, cbxFechaAño);
 				}else{
 					txtID.setText("");
 					txtNombre.setText("Nuevo Evento");
@@ -381,5 +378,10 @@ public class Evento extends javax.swing.JFrame {
 		updateDias();
 	}
 	
+	private void btnCancelActionPerformed(ActionEvent evt) {
+		System.out.println("btnCancel.actionPerformed, event="+evt);
+		frmParent.setVisible(true);
+		this.dispose();
+	}
 
 }
