@@ -5,6 +5,9 @@ import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -15,6 +18,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
@@ -22,10 +26,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.SwingUtilities;
 
-import java.util.Calendar;
-import java.util.Date;
 
 
 /**
@@ -151,6 +152,11 @@ public class Evento extends javax.swing.JFrame {
 				btnOk.setText("Guardar Evento");
 				btnOk.setBounds(218, 189, 147, 21);
 				btnOk.setFont(new java.awt.Font("Arial",0,10));
+				btnOk.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnOkActionPerformed(evt);
+					}
+				});
 			}
 			{
 				ComboBoxModel cbxInicioAñoModel = 
@@ -343,5 +349,40 @@ public class Evento extends javax.swing.JFrame {
 		frmParent.setVisible(true);
 		this.dispose();
 	}
-
+	
+	private void btnOkActionPerformed(ActionEvent evt) {
+		System.out.println("btnOk.actionPerformed, event="+evt);
+		if (getCurrentEventtID().equals("0")){
+			//estamos creando un proyecto nuevo
+			try {					
+				Date date = Calendar.getInstance().getTime();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				String currentDate = sdf.format(date);
+				String userID = frmPrincipal.getCurrentUserID();
+				if (currentDate.compareTo(makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
+					System.out.println("Fechita re ok");
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
+					String query = "insert into proyectos (jefe, nombre, descripcion, fecha_inicio, fecha_fin, estado) values ("+
+						userID + ",'" + 
+						txtNombre.getText() + "','" +
+						edpDescripcion.getText() + "','" +
+						makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
+						makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
+					System.out.println(query);
+					stmt.executeUpdate(query);
+					stmt.close();
+					conexionDB.desconectarBD();
+				}else{
+					JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior a la actual.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+		}else{
+			//TODO modificar 
+		}
+	}
 }
