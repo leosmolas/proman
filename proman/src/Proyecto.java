@@ -583,10 +583,6 @@ public class Proyecto extends javax.swing.JFrame {
 				else return false;
 	}
 	
-	private String makeDate(JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAño){
-		return (cbxAño.getModel().getElementAt(cbxAño.getSelectedIndex()).toString() +"-"+ (cbxMes.getSelectedIndex()+1) + "-" + (cbxDia.getSelectedIndex()+1));
-	}
-	
 	private void btnOkActionPerformed(ActionEvent evt) {
 		if (validarFecha()){
 			System.out.println("Fechas en orden. Current Project ID = " + getCurrentProjectID());
@@ -597,7 +593,7 @@ public class Proyecto extends javax.swing.JFrame {
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					String currentDate = sdf.format(date);
 					String userID = frmPrincipal.getCurrentUserID();
-					if (currentDate.compareTo(makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
+					if (currentDate.compareTo(Utils.makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
 						System.out.println("Fechita re ok");
 						conexionDB.conectarBD();
 						Statement stmt = conexionDB.statement();
@@ -605,8 +601,8 @@ public class Proyecto extends javax.swing.JFrame {
 							userID + ",'" + 
 							txtNombre.getText() + "','" +
 							edpDescripcion.getText() + "','" +
-							makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
-							makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
+							Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
+							Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
 						System.out.println(query);
 						stmt.executeUpdate(query);
 						stmt.close();
