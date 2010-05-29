@@ -47,7 +47,9 @@ public class Utils {
 	}
 	
 	public static String makeDate(JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAño){
-		return (cbxAño.getModel().getElementAt(cbxAño.getSelectedIndex()).toString() +"-"+ (cbxMes.getSelectedIndex()+1) + "-" + (cbxDia.getSelectedIndex()+1));
+		return (cbxAño.getModel().getElementAt(cbxAño.getSelectedIndex()).toString() +"-"+ 
+				(cbxMes.getSelectedIndex()+1<10 ? "0" + (cbxMes.getSelectedIndex()+1) : (cbxMes.getSelectedIndex()+1) + "") + "-" + 
+				(cbxDia.getSelectedIndex()+1<10 ? "0" + (cbxDia.getSelectedIndex()+1) : (cbxDia.getSelectedIndex()+1) + ""));
 	}
 	
 	public static String[] horas() {

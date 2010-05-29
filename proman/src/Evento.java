@@ -142,7 +142,7 @@ public class Evento extends javax.swing.JFrame {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			getContentPane().setLayout(null);
 			
-			this.setPreferredSize(new java.awt.Dimension(483, 294));
+			this.setPreferredSize(new java.awt.Dimension(483, 275));
 			String[] anios = new String[90];
 			for(int i=0;i<90;i++){
 				int aux = i+2010;
@@ -157,7 +157,7 @@ public class Evento extends javax.swing.JFrame {
 				btnCancel = new JButton();
 				getContentPane().add(btnCancel);
 				btnCancel.setText("Cancelar");
-				btnCancel.setBounds(377, 231, 86, 21);
+				btnCancel.setBounds(377, 212, 86, 21);
 				btnCancel.setFont(new java.awt.Font("Arial",0,10));
 				btnCancel.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -169,7 +169,7 @@ public class Evento extends javax.swing.JFrame {
 				btnOk = new JButton();
 				getContentPane().add(btnOk);
 				btnOk.setText("Guardar Evento");
-				btnOk.setBounds(218, 231, 147, 21);
+				btnOk.setBounds(218, 212, 147, 21);
 				btnOk.setFont(new java.awt.Font("Arial",0,10));
 				btnOk.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -252,6 +252,8 @@ public class Evento extends javax.swing.JFrame {
 				txtID = new JTextField();
 				getContentPane().add(txtID);
 				txtID.setBounds(98, 12, 132, 21);
+				txtID.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				txtID.setEditable(false);
 			}
 			{
 				lblID = new JLabel();
@@ -288,7 +290,7 @@ public class Evento extends javax.swing.JFrame {
 				getContentPane().add(btnEliminar);
 				btnEliminar.setText("Eliminar Evento");
 				btnEliminar.setFont(new java.awt.Font("Arial",0,10));
-				btnEliminar.setBounds(52, 231, 154, 21);
+				btnEliminar.setBounds(52, 212, 154, 21);
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						btnEliminarActionPerformed(evt);
@@ -329,7 +331,7 @@ public class Evento extends javax.swing.JFrame {
 			}
 			Utils.updateDias(cbxFechaDia, cbxFechaMes, cbxFechaAño);
 			pack();
-			this.setSize(483, 294);
+			this.setSize(483, 275);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -364,10 +366,13 @@ public class Evento extends javax.swing.JFrame {
 						txtNombre.setText(evName);
 						edpDescripcion.setText(rs.getString("descripcion"));
 						Utils.setDate(rs.getString("fecha"), cbxFechaDia, cbxFechaMes, cbxFechaAño);
+						setTime(rs.getString("hora_inicio"),cbxHora,cbxMin);
 					}else{
 						txtID.setText("");
 						txtNombre.setText("Nuevo Evento");
 						edpDescripcion.setText("");
+						cbxHora.setSelectedIndex(12);
+						cbxMin.setSelectedIndex(0);
 					}
 					rs.close();
 					conexionDB.desconectarBD();
@@ -379,13 +384,20 @@ public class Evento extends javax.swing.JFrame {
 		}
 	}
 
+	private void setTime(String hora, JComboBox cbxHora, JComboBox cbxMin) {
+		cbxHora.setSelectedIndex(Integer.parseInt(hora.substring(0,2)));
+		cbxMin.setSelectedIndex(Integer.parseInt(hora.substring(3,5)));
+	}
+
 	private void cleanForm() {
 		txtID.setText("");
 		txtNombre.setText("");
 		edpDescripcion.setText("");
 		cbxFechaDia.setSelectedIndex(0);
 		cbxFechaMes.setSelectedIndex(0);
-		cbxFechaAño.setSelectedIndex(0);		
+		cbxFechaAño.setSelectedIndex(0);	
+		cbxHora.setSelectedIndex(12);
+		cbxMin.setSelectedIndex(0);
 	}
 
 	private String getCurrentEventtID() {
@@ -410,29 +422,33 @@ public class Evento extends javax.swing.JFrame {
 		this.dispose();
 	}
 	
-	private void btnOkActionPerformed(ActionEvent evt) {
+	private void btnOkActionPerformed(ActionEvent evt) {		
 		String fecha = Utils.makeDate(cbxFechaDia,cbxFechaMes,cbxFechaAño);
 		String evID = getCurrentEventtID();
+		int ok;
+		
 		System.out.println("btnOk.actionPerformed, event="+evt);
 		if (evID.equals("0")){
 			//estamos creando un proyecto nuevo
 			try {					
-				//TODO revisar si esto esta andando, con lo de diego
 				if (inicioProy.compareTo(fecha) <= 0){
 					if (fecha.compareTo(finProy) <= 0) {
 						//System.out.println("Fechita re ok");
-						conexionDB.conectarBD();
-						Statement stmt = conexionDB.statement();
-						String query = "insert into eventos (proyecto, fecha, descripcion, hora_inicio, nombre) values ("+
-							idProyecto + ",'" + 
-							fecha + "','" +
-							edpDescripcion.getText() + "','" +
-							cbxHora.getSelectedItem() + ":" + cbxMin.getSelectedItem() + ":00','" +
-							txtNombre.getText() + "')";
-						System.out.println("query: " + query);
-						stmt.executeUpdate(query);
-						stmt.close();
-						conexionDB.desconectarBD();
+						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (ok == JOptionPane.OK_OPTION) {
+							conexionDB.conectarBD();
+							Statement stmt = conexionDB.statement();
+							String query = "insert into eventos (proyecto, fecha, descripcion, hora_inicio, nombre) values ("+
+								idProyecto + ",'" + 
+								fecha + "','" +
+								edpDescripcion.getText() + "','" +
+								cbxHora.getSelectedItem() + ":" + cbxMin.getSelectedItem() + ":00','" +
+								txtNombre.getText() + "')";
+							System.out.println("query: " + query);
+							stmt.executeUpdate(query);
+							stmt.close();
+							conexionDB.desconectarBD();
+						}
 					}
 					else {
 						JOptionPane.showMessageDialog(this, "La fecha no puede ser posterior al fin del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
@@ -446,9 +462,37 @@ public class Evento extends javax.swing.JFrame {
 			}
 			
 		}else{
-			//TODO modificar 
-		}
-		
+			try {
+				if (inicioProy.compareTo(fecha) <= 0){
+					if (fecha.compareTo(finProy) <= 0) {
+						//System.out.println("Fechita re ok");
+						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (ok == JOptionPane.OK_OPTION) {
+							conexionDB.conectarBD();
+							Statement stmt = conexionDB.statement();
+							String query ="update eventos set "+ 
+								"fecha = '" + Utils.makeDate(cbxFechaDia, cbxFechaMes, cbxFechaAño) + "', " +
+								"hora_inicio = '" + cbxHora.getSelectedItem() + ":" + cbxMin.getSelectedItem() + ":00', " +
+								"nombre = '" + txtNombre.getText() + "', " +
+								"descripcion = '" + edpDescripcion.getText() + 
+								"' where id_evento = " + evID;
+							System.out.println("query: " + query);
+							stmt.executeUpdate(query);
+							stmt.close();
+							conexionDB.desconectarBD();
+						}
+					}
+					else {
+						JOptionPane.showMessageDialog(this, "La fecha no puede ser posterior al fin del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+					}
+				}else{
+					JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior al comienzo del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}		
 		populateList();
 	}
 	
