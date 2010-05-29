@@ -426,55 +426,58 @@ public class Proyecto extends javax.swing.JFrame {
 	}
 	
 	private void lstProyectosValueChanged(ListSelectionEvent evt) {
-		String projName = getCurrentProjectName();
-		String projID = getCurrentProjectID();
+		String projName;
+		String projID;
 		
 		String currentUser = frmPrincipal.getCurrentUserID();
 		
-		boolean permitido = esJefe(currentUser, projID);
-		
-		System.out.println("Proyecto " + projName + ", " + permitido );
-		
-		setUserControls(permitido);
-		
-		if (projID.equals("0")){
-			//si seleccionó para crear un nuevo proyecto
-			btnOk.setEnabled(true);
-			txtID.setText("");
-			cbxEstado.setSelectedItem("Pendiente");
-			txtNombre.setText("Nuevo proyecto");
-			edpDescripcion.setText("");
-			cbxEstado.setEnabled(false);
-			Date date = Calendar.getInstance().getTime();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			String currentDate = sdf.format(date);
-			setDate(currentDate, cbxInicioDia, cbxInicioMes, cbxInicioAño);
-			setDate(currentDate, cbxFinDia, cbxFinMes, cbxFinAño);
-		} else {
-			//seleccionó un proyecto ya existente
-			cbxEstado.setEnabled(true);
-			try {
-				conexionDB.conectarBD();
-				Statement stmt = conexionDB.statement();
-				
-				String query = "select descripcion, fecha_inicio, fecha_fin, estado from proyectos where id_proyecto = " + projID;
-				ResultSet rs = stmt.executeQuery(query);
-				
-				if(rs.next()){
-					txtID.setText(projID);
-					txtNombre.setText(projName);
-					edpDescripcion.setText(rs.getString("descripcion"));
-					cbxEstado.setSelectedItem(rs.getString("estado"));
-					setDate(rs.getString("fecha_inicio"), cbxInicioDia, cbxInicioMes, cbxInicioAño);
-					setDate(rs.getString("fecha_fin"), cbxFinDia, cbxFinMes, cbxFinAño);
-				}else{
-					System.out.println("This should NOT happen...");
+		boolean permitido;
+		if (lstProyectos.getSelectedIndices().length>0) {
+			
+			projName = getCurrentProjectName();
+			projID = getCurrentProjectID();
+			permitido = esJefe(currentUser, projID);
+			setUserControls(permitido);
+			System.out.println("Proyecto " + projName + ", " + permitido );
+			if (projID.equals("0")){
+				//si seleccionó para crear un nuevo proyecto
+				btnOk.setEnabled(true);
+				txtID.setText("");
+				cbxEstado.setSelectedItem("Pendiente");
+				txtNombre.setText("Nuevo proyecto");
+				edpDescripcion.setText("");
+				cbxEstado.setEnabled(false);
+				Date date = Calendar.getInstance().getTime();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				String currentDate = sdf.format(date);
+				setDate(currentDate, cbxInicioDia, cbxInicioMes, cbxInicioAño);
+				setDate(currentDate, cbxFinDia, cbxFinMes, cbxFinAño);
+			} else {
+				//seleccionó un proyecto ya existente
+				cbxEstado.setEnabled(true);
+				try {
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
+					
+					String query = "select descripcion, fecha_inicio, fecha_fin, estado from proyectos where id_proyecto = " + projID;
+					ResultSet rs = stmt.executeQuery(query);
+					
+					if(rs.next()){
+						txtID.setText(projID);
+						txtNombre.setText(projName);
+						edpDescripcion.setText(rs.getString("descripcion"));
+						cbxEstado.setSelectedItem(rs.getString("estado"));
+						setDate(rs.getString("fecha_inicio"), cbxInicioDia, cbxInicioMes, cbxInicioAño);
+						setDate(rs.getString("fecha_fin"), cbxFinDia, cbxFinMes, cbxFinAño);
+					}else{
+						System.out.println("This should NOT happen...");
+					}
+					rs.close();
+					conexionDB.desconectarBD();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				rs.close();
-				conexionDB.desconectarBD();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}
