@@ -1,9 +1,14 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextField;
@@ -45,25 +50,70 @@ public class Tarea extends javax.swing.JFrame {
 	private JComboBox cbxFinDia;
 	private JComboBox cbxFinMes;
 	private JComboBox cbxTareas;
-
-	/**
-	* Auto-generated main method to display this JFrame
-	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				Tarea inst = new Tarea();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});
-	}
 	
-	public Tarea() {
+	private JFrame frmParent;
+	private Conexion conexionDB;
+	private String idProyecto;
+	private String inicioProy;
+	private String finProy;
+	
+	public Tarea(JFrame parent,Conexion dbConnection,String proy,String id) {
 		super();
 		initGUI();
+		
+		conexionDB = dbConnection;
+		frmParent = parent;
+		idProyecto = id;
+		populateList();
+		try {
+			conexionDB.conectarBD();			
+			Statement stmt = conexionDB.statement();			
+			String query = "select fecha_inicio,fecha_fin from proyectos where id_proyecto = "+idProyecto;
+			
+			ResultSet rs = stmt.executeQuery(query);
+			rs.next();
+			inicioProy = rs.getString("fecha_inicio");
+			finProy = rs.getString("fecha_fin");
+			stmt.close();
+			conexionDB.desconectarBD();			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		this.setTitle("Project Manager: Tareas del Proyecto " + proy);
 	}
 	
+	private void populateList() {
+		int cantResults,i;
+		try {
+			conexionDB.conectarBD();			
+			Statement stmt = conexionDB.statement();			
+			String query = "select id_evento, nombre from eventos where proyecto = "+idProyecto;
+			
+			ResultSet rs = stmt.executeQuery(query);
+			
+			rs.last();
+			cantResults = rs.getRow();
+			rs.beforeFirst();
+			i=0;
+			String[] stringArr = new String[cantResults+1];
+			for(i=0;i<cantResults;i++){
+				rs.next();
+				stringArr[i] = rs.getString("id_evento") + "-"+ rs.getString("nombre");
+			}
+			
+			stringArr[i] = "0-CREAR NUEVO EVENTO"; 
+			
+			lstEventos.setModel(new DefaultComboBoxModel(stringArr));
+			lstEventos.setSelectedIndex(0);
+			stmt.close();
+			conexionDB.desconectarBD();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void initGUI() {
 		try {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

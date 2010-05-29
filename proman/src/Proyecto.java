@@ -340,6 +340,11 @@ public class Proyecto extends javax.swing.JFrame {
 				btnAdminTarea.setText("Administrar Tarea");
 				btnAdminTarea.setFont(new java.awt.Font("Tahoma",0,10));
 				btnAdminTarea.setBounds(500, 64, 154, 21);
+				btnAdminTarea.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnAdminTareaActionPerformed(evt);
+					}
+				});
 			}
 			{
 				btnAdimnGrupo = new JButton();
@@ -623,6 +628,20 @@ public class Proyecto extends javax.swing.JFrame {
 			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún proyecto.", 
 											"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
 		}
+	}
+	
+	private void btnAdminTareaActionPerformed(ActionEvent evt) {
+		//System.out.println("btnAdminEvento.actionPerformed, event="+evt);
+		String id = getCurrentProjectID();
+		if (!id.equals("0")){
+			this.setVisible(false);
+			
+			Evento evento = new Tarea(this,conexionDB,getCurrentProjectName(),id);
+			evento.setVisible(true);
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún proyecto.", 
+												"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
 	}
 
 }

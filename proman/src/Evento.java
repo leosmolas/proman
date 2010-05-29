@@ -67,19 +67,7 @@ public class Evento extends javax.swing.JFrame {
 	private String inicioProy;
 	private String finProy;
 
-//	/**
-//	* Auto-generated main method to display this JFrame
-//	*/
-//	public static void main(String[] args) {
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				Evento inst = new Evento();
-//				inst.setLocationRelativeTo(null);
-//				inst.setVisible(true);
-//			}
-//		});
-//	}
-//	
+
 	public Evento(JFrame parent,Conexion dbConnection,String proy,String id) {
 		super();
 		initGUI();
