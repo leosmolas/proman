@@ -10,11 +10,13 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
@@ -22,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
@@ -47,11 +50,11 @@ import javax.swing.SwingUtilities;
 public class Proyecto extends javax.swing.JFrame {
 	private JLabel lblID;
 	private JButton btnAdminEvento;
-	private JComboBox cbxEstado;
 	private JButton btnAdminGrupo;
+	private JList lstProyectos;
+	private JComboBox cbxEstado;
 	private JButton btnAdminTarea;
 	private JButton btnEliminar;
-	private JList lstProyectos;
 	private JLabel lblProyectos;
 	private JButton btnOk;
 	private JButton btnCancel;
@@ -75,16 +78,16 @@ public class Proyecto extends javax.swing.JFrame {
 	/**
 	* Auto-generated main method to display this JFrame
 	*/
-//	public static void main(String[] args) {/*
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				Proyecto inst = new Proyecto(null, null);
-//				inst.setLocationRelativeTo(null);
-//				inst.setVisible(true);
-//			}
-//		});*/
-//		Main.main(null);
-//	}
+	public static void main(String[] args) {/*
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				Proyecto inst = new Proyecto(null, null);
+				inst.setLocationRelativeTo(null);
+				inst.setVisible(true);
+			}
+		});*/
+		Main.main(null);
+	}
 	
 	
 	public Proyecto(Main parent, Conexion dbConnection) {
@@ -94,7 +97,6 @@ public class Proyecto extends javax.swing.JFrame {
 		conexionDB = dbConnection;
 		frmPrincipal = parent;
 		populateList();
-		lstProyectos.setSelectedIndex(0);
 	}
 	
 	public Main getMain(){
@@ -102,7 +104,7 @@ public class Proyecto extends javax.swing.JFrame {
 	}
 	private void initGUI() {
 		try {
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			this.setTitle("Project Manager: Proyecto");
 			getContentPane().setLayout(null);
 			this.setPreferredSize(new java.awt.Dimension(674, 304));
@@ -295,22 +297,6 @@ public class Proyecto extends javax.swing.JFrame {
 				lblProyectos.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
-				ListModel lstProyectosModel = 
-					new DefaultComboBoxModel(
-							new String[] {});
-				lstProyectos = new JList();
-				getContentPane().add(lstProyectos);
-				lstProyectos.setModel(lstProyectosModel);
-				lstProyectos.setBounds(296, 40, 192, 189);
-				lstProyectos.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-				lstProyectos.setFont(new java.awt.Font("Arial",0,10));
-				lstProyectos.addListSelectionListener(new ListSelectionListener() {
-					public void valueChanged(ListSelectionEvent evt) {
-						lstProyectosValueChanged(evt);
-					}
-				});
-			}
-			{
 				btnEliminar = new JButton();
 				getContentPane().add(btnEliminar);
 				btnEliminar.setText("Eliminar Proyecto");
@@ -335,18 +321,28 @@ public class Proyecto extends javax.swing.JFrame {
 				});
 			}
 			{
-				btnAdminTarea = new JButton();
-				getContentPane().add(btnAdminTarea);
-				btnAdminTarea.setText("Administrar Tarea");
-				btnAdminTarea.setFont(new java.awt.Font("Tahoma",0,10));
-				btnAdminTarea.setBounds(500, 64, 154, 21);
+				ListModel lstProyectosModel = new DefaultComboBoxModel();
+				lstProyectos = new JList();
+				lstProyectos.setModel(lstProyectosModel);
+				lstProyectos.setBounds(296, 38, 192, 189);
+				getContentPane().add(lstProyectos);
+				lstProyectos.setFont(new java.awt.Font("Tahoma",0,10));
+				lstProyectos.addListSelectionListener(new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent evt) {
+						lstProyectosValueChanged(evt);
+					}
+				});
 			}
 			{
-				btnAdminGrupo = new JButton();
-				getContentPane().add(btnAdminGrupo);
-				btnAdminGrupo.setText("Administrar Grupo");
-				btnAdminGrupo.setFont(new java.awt.Font("Tahoma",0,10));
-				btnAdminGrupo.setBounds(500, 91, 154, 21);
+				btnAdminTarea = new JButton();
+				getContentPane().add(btnAdminTarea);
+				getContentPane().add(getBtnAdminGrupo());
+				btnAdminTarea.setText("Administrar Tarea");
+				btnAdminTarea.setFont(new java.awt.Font("Tahoma",0,10));
+				btnAdminTarea.setBounds(499, 64, 154, 21);
+			}
+			{
+				
 			}
 			pack();
 			this.setSize(674, 304);
@@ -367,18 +363,20 @@ public class Proyecto extends javax.swing.JFrame {
 			int cantResults = rs.getRow();
 			rs.beforeFirst();
 			int i=0;
-			String[] stringArr = new String[cantResults+1];
+			DefaultComboBoxModel model = new DefaultComboBoxModel();
 			for(i=0;i<cantResults;i++){
 				rs.next();
-				stringArr[i] = rs.getString("id_proyecto") + "-"+ rs.getString("nombre");
+				model.addElement(rs.getString("id_proyecto") + "-"+ rs.getString("nombre"));
+				//System.out.println(stringArr[i]);
 			}
 			
-			stringArr[i] = "0-CREAR NUEVO PROYECTO"; 
+			model.addElement("0-CREAR NUEVO PROYECTO"); 
 			
-			lstProyectos.setModel(new DefaultComboBoxModel(stringArr));
-			lstProyectos.setSelectedIndex(0);
 			stmt.close();
 			conexionDB.desconectarBD();
+			
+			lstProyectos.setModel(model);
+			lstProyectos.setSelectedIndex(0);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -407,7 +405,7 @@ public class Proyecto extends javax.swing.JFrame {
 		try {
 			conexionDB.conectarBD();
 			Statement stmtJefe = conexionDB.statement();			
-			ResultSet rsJefe = stmtJefe.executeQuery(queryJefe);			
+			ResultSet rsJefe = stmtJefe.executeQuery(queryJefe);
 			if(rsJefe.next()) ret = userName.equals(rsJefe.getString("jefe"));
 			stmtJefe.close();
 			conexionDB.desconectarBD();
@@ -431,14 +429,17 @@ public class Proyecto extends javax.swing.JFrame {
 		String projName = getCurrentProjectName();
 		String projID = getCurrentProjectID();
 		
-		String currentUser = frmPrincipal.getCurrentUserName();
+		String currentUser = frmPrincipal.getCurrentUserID();
 		
 		boolean permitido = esJefe(currentUser, projID);
+		
+		System.out.println("Proyecto " + projName + ", " + permitido );
 		
 		setUserControls(permitido);
 		
 		if (projID.equals("0")){
 			//si seleccionó para crear un nuevo proyecto
+			btnOk.setEnabled(true);
 			txtID.setText("");
 			cbxEstado.setSelectedItem("Pendiente");
 			txtNombre.setText("Nuevo proyecto");
@@ -571,25 +572,29 @@ public class Proyecto extends javax.swing.JFrame {
 	private void btnOkActionPerformed(ActionEvent evt) {
 		if (validarFecha()){
 			if (getCurrentProjectID().equals("0")){
-				//estamos creando un proyecto nuevo
+				//Caso de uso CREAR PROYECTO
 				try {					
 					Date date = Calendar.getInstance().getTime();
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					String currentDate = sdf.format(date);
 					if (currentDate.compareTo(Utils.makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
-						String userID = frmPrincipal.getCurrentUserID();
-						conexionDB.conectarBD();
-						Statement stmt = conexionDB.statement();
-						String query = "insert into proyectos (jefe, nombre, descripcion, fecha_inicio, fecha_fin, estado) values ("+
-							userID + ",'" + 
-							txtNombre.getText() + "','" +
-							edpDescripcion.getText() + "','" +
-							Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
-							Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
-						System.out.println(query);
-						stmt.executeUpdate(query);
-						stmt.close();
-						conexionDB.desconectarBD();
+						int opt = JOptionPane.showConfirmDialog(this, "Está seguro de que desea crear un proyecto nuevo?", "Project Manager - Crear Proyecto", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (opt == JOptionPane.YES_OPTION){
+							String userID = frmPrincipal.getCurrentUserID();
+							conexionDB.conectarBD();
+							Statement stmt = conexionDB.statement();
+							String query = "insert into proyectos (jefe, nombre, descripcion, fecha_inicio, fecha_fin, estado) values ("+
+								userID + ",'" + 
+								txtNombre.getText() + "','" +
+								edpDescripcion.getText() + "','" +
+								Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
+								Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
+							System.out.println(query);
+							stmt.executeUpdate(query);
+							stmt.close();
+							conexionDB.desconectarBD();
+							populateList();
+						}
 					}else{
 						JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior a la actual.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
 					}
@@ -600,7 +605,6 @@ public class Proyecto extends javax.swing.JFrame {
 				
 			}else{
 				//estamos modificando un proyecto existente
-				String userID = frmPrincipal.getCurrentUserID();
 				try {
 					conexionDB.conectarBD();
 					Statement stmt = conexionDB.statement();
@@ -656,6 +660,16 @@ public class Proyecto extends javax.swing.JFrame {
 			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún proyecto.", 
 											"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
 		}
+	}
+	
+	private JButton getBtnAdminGrupo() {
+		if(btnAdminGrupo == null) {
+			btnAdminGrupo = new JButton();
+			btnAdminGrupo.setText("Administrar Grupos");
+			btnAdminGrupo.setBounds(500, 90, 155, 21);
+			btnAdminGrupo.setFont(new java.awt.Font("Tahoma",0,10));
+		}
+		return btnAdminGrupo;
 	}
 
 }
