@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.FeatureDescriptor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -79,7 +80,7 @@ public class Evento extends javax.swing.JFrame {
 //		});
 //	}
 //	
-	public Evento(JFrame parent,Conexion dbConnection,String proy,String id,String inicioProy, String finProy) {
+	public Evento(JFrame parent,Conexion dbConnection,String proy,String id) {
 		super();
 		initGUI();
 		
@@ -87,8 +88,21 @@ public class Evento extends javax.swing.JFrame {
 		frmParent = parent;
 		idProyecto = id;
 		populateList();
-		this.inicioProy = inicioProy;
-		this.finProy = finProy;
+		try {
+			conexionDB.conectarBD();			
+			Statement stmt = conexionDB.statement();			
+			String query = "select fecha_inicio,fecha_fin from proyectos where id_proyecto = "+idProyecto;
+			
+			ResultSet rs = stmt.executeQuery(query);
+			rs.next();
+			inicioProy = rs.getString("fecha_inicio");
+			finProy = rs.getString("fecha_fin");
+			stmt.close();
+			conexionDB.desconectarBD();			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		this.setTitle("Project Manager: Eventos del Proyecto " + proy);
 	}
 	

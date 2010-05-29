@@ -616,7 +616,7 @@ public class Proyecto extends javax.swing.JFrame {
 		if (!id.equals("0")){
 			this.setVisible(false);
 			
-			Evento evento = new Evento(this,conexionDB,getCurrentProjectName(),id,Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño),Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño));
+			Evento evento = new Evento(this,conexionDB,getCurrentProjectName(),id);
 			evento.setVisible(true);
 		}
 		else {
