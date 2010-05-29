@@ -48,7 +48,7 @@ public class Proyecto extends javax.swing.JFrame {
 	private JLabel lblID;
 	private JButton btnAdminEvento;
 	private JComboBox cbxEstado;
-	private JButton btnAdimnGrupo;
+	private JButton btnAdminGrupo;
 	private JButton btnAdminTarea;
 	private JButton btnEliminar;
 	private JList lstProyectos;
@@ -342,11 +342,11 @@ public class Proyecto extends javax.swing.JFrame {
 				btnAdminTarea.setBounds(500, 64, 154, 21);
 			}
 			{
-				btnAdimnGrupo = new JButton();
-				getContentPane().add(btnAdimnGrupo);
-				btnAdimnGrupo.setText("Administrar Grupo");
-				btnAdimnGrupo.setFont(new java.awt.Font("Tahoma",0,10));
-				btnAdimnGrupo.setBounds(500, 91, 154, 21);
+				btnAdminGrupo = new JButton();
+				getContentPane().add(btnAdminGrupo);
+				btnAdminGrupo.setText("Administrar Grupo");
+				btnAdminGrupo.setFont(new java.awt.Font("Tahoma",0,10));
+				btnAdminGrupo.setBounds(500, 91, 154, 21);
 			}
 			pack();
 			this.setSize(674, 304);
@@ -401,9 +401,41 @@ public class Proyecto extends javax.swing.JFrame {
 		cbxDia.setSelectedIndex(Integer.parseInt(yyyyMMdd.substring(8))-1);
 	}
 	
+	public boolean esJefe(String userName, String projectID) {
+		String queryJefe = "select jefe from proyectos where id_proyecto = " + projectID;
+		boolean ret = false;
+		try {
+			conexionDB.conectarBD();
+			Statement stmtJefe = conexionDB.statement();			
+			ResultSet rsJefe = stmtJefe.executeQuery(queryJefe);			
+			if(rsJefe.next()) ret = userName.equals(rsJefe.getString("jefe"));
+			stmtJefe.close();
+			conexionDB.desconectarBD();
+			
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return ret;
+	}
+	
+	private void setUserControls(boolean enable) {
+		btnAdminEvento.setEnabled(enable);
+		btnAdminTarea.setEnabled(enable);
+		btnAdminGrupo.setEnabled(enable);
+		btnEliminar.setEnabled(enable);
+		btnOk.setEnabled(enable);
+	}
+	
 	private void lstProyectosValueChanged(ListSelectionEvent evt) {
 		String projName = getCurrentProjectName();
 		String projID = getCurrentProjectID();
+		
+		String currentUser = frmPrincipal.getCurrentUserName();
+		
+		boolean permitido = esJefe(currentUser, projID);
+		
+		setUserControls(permitido);
 		
 		if (projID.equals("0")){
 			//si seleccionó para crear un nuevo proyecto
@@ -418,6 +450,7 @@ public class Proyecto extends javax.swing.JFrame {
 			setDate(currentDate, cbxInicioDia, cbxInicioMes, cbxInicioAño);
 			setDate(currentDate, cbxFinDia, cbxFinMes, cbxFinAño);
 		} else {
+			//seleccionó un proyecto ya existente
 			cbxEstado.setEnabled(true);
 			try {
 				conexionDB.conectarBD();
