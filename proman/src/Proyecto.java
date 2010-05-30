@@ -463,11 +463,15 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			projID = getCurrentProjectID();
 			permitido = esJefe(currentUser, projID);
 			editable = editable(projID);
-			setUserControls(permitido, editable);
+
 			System.out.println("Proyecto " + projName + ", " + permitido );
 			if (projID.equals("0")){
+				setUserControls(true, true);
+				btnAdminEvento.setEnabled(false);
+				btnAdminTarea.setEnabled(false);
+				btnAdminGrupo.setEnabled(false);
+				btnEliminar.setEnabled(false);
 				//si seleccionó para crear un nuevo proyecto
-				btnOk.setEnabled(true);
 				txtID.setText("");
 				cbxEstado.setSelectedItem("Pendiente");
 				txtNombre.setText("Nuevo proyecto");
@@ -479,6 +483,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				setDate(currentDate, cbxInicioDia, cbxInicioMes, cbxInicioAño);
 				setDate(currentDate, cbxFinDia, cbxFinMes, cbxFinAño);
 			} else {
+				setUserControls(permitido, editable);
 				//seleccionó un proyecto ya existente
 				try {
 					conexionDB.conectarBD();
