@@ -1,3 +1,11 @@
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -8,6 +16,8 @@ import javax.swing.ListModel;
 
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.SwingUtilities;
 
 
@@ -30,24 +40,72 @@ public class Rol extends javax.swing.JFrame {
 	private JEditorPane edpDescripción;
 	private JButton btnOk;
 	private JButton btnCancel;
-
+	private Conexion conexionBD;
+	private Grupo frmGrupo;
+	private int idGrupo;
+	private ResultSet rs;
+	Statement stmt;
+	
 	/**
 	* Auto-generated main method to display this JFrame
 	*/
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
+		/*SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				Rol inst = new Rol();
+				Rol inst = new Rol(null,null,1);
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
 			}
-		});
+		});*/
+		Main.main(null);
 	}
 	
-	public Rol() {
+	public Rol(Grupo parent, Conexion conexion, int idGrupo) {
 		super();
 		initGUI();
+		conexionBD = new Conexion("root", "");
+		frmGrupo = parent;
+		this.idGrupo = idGrupo;
+		//frmGrupo.SetVisible(false);
+		populateList();
 	}
+	
+	
+	public void populateList(){
+		try {
+			conexionBD.conectarBD();			
+			stmt = conexionBD.statement();			
+			String query = "select * from rol join usuarios where grupo = " + idGrupo + " and usuario = id_usuario";
+			
+			rs = stmt.executeQuery(query);
+			
+			rs.last();
+			int cantResults = rs.getRow();
+			rs.beforeFirst();
+			int i=0;
+			DefaultComboBoxModel model = new DefaultComboBoxModel();
+			for(i=0;i<cantResults;i++){
+				rs.next();
+				model.addElement(rs.getString("nombre"));
+				//System.out.println(stringArr[i]);
+			}
+			
+			//model.addElement("0-CREAR NUEVO PROYECTO"); 
+			
+			//stmt.close();
+			//conexionBD.desconectarBD();
+			lstUsuarios.setModel(model);
+			//lstProyectos.setModel(model);
+			lstUsuarios.setSelectedIndex(0);
+			//lstProyectos.setSelectedIndex(0);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 	
 	private void initGUI() {
 		try {
@@ -55,15 +113,25 @@ public class Rol extends javax.swing.JFrame {
 			getContentPane().setLayout(null);
 			this.setTitle("Proyect Manager: Rol");
 			this.setPreferredSize(new java.awt.Dimension(400, 260));
+			this.addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent evt) {
+					thisWindowClosing(evt);
+				}
+			});
 			{
 				ListModel lstUsuariosModel = 
 					new DefaultComboBoxModel(
-							new String[] { "Juan Perez", "Fernando Sisul", "Jose Gonzalez" });
+							new String[] {});
 				lstUsuarios = new JList();
 				getContentPane().add(lstUsuarios);
 				lstUsuarios.setModel(lstUsuariosModel);
 				lstUsuarios.setBounds(12, 32, 130, 153);
 				lstUsuarios.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				lstUsuarios.addListSelectionListener(new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent evt) {
+						lstUsuariosValueChanged(evt);
+					}
+				});
 			}
 			{
 				lblUsuarios = new JLabel();
@@ -88,16 +156,26 @@ public class Rol extends javax.swing.JFrame {
 			{
 				btnOk = new JButton();
 				getContentPane().add(btnOk);
-				btnOk.setText("Ok");
-				btnOk.setBounds(236, 197, 55, 21);
+				btnOk.setText("Guardar");
+				btnOk.setBounds(210, 197, 81, 21);
 				btnOk.setFont(new java.awt.Font("Arial",0,10));
+				btnOk.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						btnOkMouseClicked(evt);
+					}
+				});
 			}
 			{
 				btnCancel = new JButton();
 				getContentPane().add(btnCancel);
-				btnCancel.setText("Cancelar");
+				btnCancel.setText("Volver");
 				btnCancel.setBounds(303, 197, 77, 21);
 				btnCancel.setFont(new java.awt.Font("Arial",0,10));
+				btnCancel.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						btnCancelMouseClicked(evt);
+					}
+				});
 			}
 			pack();
 			this.setSize(400, 260);
@@ -105,5 +183,64 @@ public class Rol extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	private void lstUsuariosValueChanged(ListSelectionEvent evt) {
+		try{
+			//System.out.println("lstUsuarios.valueChanged, event="+evt);
+			//TODO add your code for lstUsuarios.valueChanged
+			int i = 0;
+			rs.first();
+			for(i=0;i<lstUsuarios.getSelectedIndex();i++){
+				rs.next();
+			}
+			
+			//System.out.println(rs.getString("descripcion"));
+			edpDescripción.setText(rs.getString("descripcion"));
+		}catch(SQLException e) {
+			e.printStackTrace();		
+			
+		}
+	}
+	
+	private void btnCancelMouseClicked(MouseEvent evt) {
+		//System.out.println("btnCancel.mouseClicked, event="+evt);
+		//TODO add your code for btnCancel.mouseClicked
+		close();
+	
+	}
+	
+	private void btnOkMouseClicked(MouseEvent evt) {
+		//System.out.println("btnOk.mouseClicked, event="+evt);
+		//TODO add your code for btnOk.mouseClicked
+		try {
+			String query = "update rol set descripcion = '" + edpDescripción.getText() + "' where usuario = " + rs.getString("id_usuario") + " and grupo = " + idGrupo;
+			
+			//System.out.println(query);
+			
+			stmt.executeUpdate(query);
+		}catch(SQLException e) {
+			e.printStackTrace();		
+			
+		}
+		populateList();
+	}
+	
+	private void thisWindowClosing(WindowEvent evt) {
+		System.out.println("this.windowClosing, event="+evt);
+		//TODO add your code for this.windowClosing
+		close();
+	}
 
+	private void close(){
+		try{
+			stmt.close();
+			conexionBD.desconectarBD();
+			frmGrupo.setVisible(true);
+			this.dispose();
+		}catch(SQLException e) {
+			e.printStackTrace();		
+			
+		}	
+	}
+	
 }
