@@ -170,6 +170,11 @@ public class Tarea extends javax.swing.JFrame {
 				btnEliminar.setText("Eliminar Tarea");
 				btnEliminar.setFont(new java.awt.Font("Arial",0,10));
 				btnEliminar.setBounds(216, 194, 122, 21);
+				btnEliminar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnEliminarActionPerformed(evt);
+					}
+				});
 			}
 			{
 				ComboBoxModel cbxGruposModel = 
@@ -344,6 +349,11 @@ public class Tarea extends javax.swing.JFrame {
 				btnOk.setText("Guardar Tarea");
 				btnOk.setFont(new java.awt.Font("Arial",0,10));
 				btnOk.setBounds(350, 194, 121, 21);
+				btnOk.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnOkActionPerformed(evt);
+					}
+				});
 			}
 			{
 				btnCancel = new JButton();
@@ -384,10 +394,10 @@ public class Tarea extends javax.swing.JFrame {
 	}
 	
 	private void lstTareaValueChanged(ListSelectionEvent evt) {
-		String evName , evID;
+		String evID;
 		
 		if (lstTarea.getSelectedIndices().length>0) {
-			evName = getDescripcion(lstTarea.getSelectedValue().toString());
+
 			evID   = getID(lstTarea.getSelectedValue().toString());
 	
 			if (evID.equals("0")){
@@ -442,6 +452,91 @@ public class Tarea extends javax.swing.JFrame {
 	
 	private void cbxFinActionPerformed(ActionEvent evt) {
 		Utils.updateDias(cbxFinDia,cbxFinMes,cbxFinAño);
+	}
+	
+	private void btnEliminarActionPerformed(ActionEvent evt) {
+		System.out.println("btnEliminar.actionPerformed, event="+evt);
+		//TODO add your code for btnEliminar.actionPerformed
+	}
+	
+	private void btnOkActionPerformed(ActionEvent evt) {
+		String fechaInicio = Utils.makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño);
+		String fechaFin = Utils.makeDate(cbxFinDia,cbxFinMes,cbxFinAño);
+		String tareaID = getID(lstTarea.getSelectedValue().toString());
+		int ok;
+		
+		if (tareaID.equals("0")){
+			//estamos creando un proyecto nuevo
+			try {					
+				if (inicioProy.compareTo(fechaInicio) <= 0){
+					if (fechaInicio.compareTo(fechaFin) <= 0) {
+						if (fechaFin.compareTo(finProy) <= 0) {
+							//System.out.println("Fechita re ok");
+							ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea crear la tarea?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+							if (ok == JOptionPane.OK_OPTION) {
+								conexionDB.conectarBD();
+								Statement stmt = conexionDB.statement();
+								String query = "insert into tareas (descripcion, fecha_inicio, fecha_fin, grupo, proyecto) values ("+
+									"'" + edpDescripcion.getText() + "'," +
+									"'" + Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "'," + 
+									"'" + Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "'," + 
+									getID(cbxGrupos.getSelectedItem().toString()) + "," + 
+									idProyecto + ")";
+								System.out.println("query: " + query);
+								stmt.executeUpdate(query);
+								stmt.close();
+								conexionDB.desconectarBD();
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(this, "La fecha de fin de la tarea no puede ser posterior al fin del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else {
+						JOptionPane.showMessageDialog(this, "La fecha de inicio de la tarea no puede ser posterior al fin de la tarea", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+					}
+				}else{
+					JOptionPane.showMessageDialog(this, "La fecha de inicio de la tarea no puede ser anterior al comienzo del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		else{
+			/*try {
+				if (inicioProy.compareTo(fecha) <= 0){
+					if (fecha.compareTo(finProy) <= 0) {
+						//System.out.println("Fechita re ok");
+						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (ok == JOptionPane.OK_OPTION) {
+							conexionDB.conectarBD();
+							Statement stmt = conexionDB.statement();
+							String query ="update eventos set "+ 
+								"fecha = '" + Utils.makeDate(cbxFechaDia, cbxFechaMes, cbxFechaAño) + "', " +
+								"hora_inicio = '" + cbxHora.getSelectedItem() + ":" + cbxMin.getSelectedItem() + ":00', " +
+								"nombre = '" + txtNombre.getText() + "', " +
+								"descripcion = '" + edpDescripcion.getText() + 
+								"' where id_evento = " + evID;
+							System.out.println("query: " + query);
+							stmt.executeUpdate(query);
+							stmt.close();
+							conexionDB.desconectarBD();
+						}
+					}
+					else {
+						JOptionPane.showMessageDialog(this, "La fecha no puede ser posterior al fin del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+					}
+				}else{
+					JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior al comienzo del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}*/
+		}		
+		populateList();
 	}
 
 }

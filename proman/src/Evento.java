@@ -422,7 +422,7 @@ public class Evento extends javax.swing.JFrame {
 				if (inicioProy.compareTo(fecha) <= 0){
 					if (fecha.compareTo(finProy) <= 0) {
 						//System.out.println("Fechita re ok");
-						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea crear el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 						if (ok == JOptionPane.OK_OPTION) {
 							conexionDB.conectarBD();
 							Statement stmt = conexionDB.statement();
