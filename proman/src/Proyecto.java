@@ -371,6 +371,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			conexionDB.desconectarBD();
 			
 			lstProyectos.setModel(model);
+			
 			lstProyectos.setSelectedIndex(0);
 			
 		} catch (SQLException e) {
@@ -533,6 +534,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 					
 					stmt.executeUpdate(query);
 					cbxEstado.setSelectedItem("Cancelado");
+					populateList();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -552,6 +554,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 						
 						stmt.executeUpdate(query);
 						cbxEstado.setSelectedItem("Cancelado");
+						populateList();
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
