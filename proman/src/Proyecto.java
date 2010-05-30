@@ -201,13 +201,9 @@ public class Proyecto extends javax.swing.JFrame {
 				cbxInicioMes.setSelectedIndex(0);
 			}
 			{
-				String[] anios = new String[90];
-				for(int i=0;i<90;i++){
-					int aux = i+2010;
-					anios[i] = ""+ aux;
-				}
+
 				ComboBoxModel cbxInicioAñoModel = 
-					new DefaultComboBoxModel(anios);
+					new DefaultComboBoxModel(Utils.anios());
 				cbxInicioAño = new JComboBox();
 				getContentPane().add(cbxInicioAño);
 				cbxInicioAño.setModel(cbxInicioAñoModel);
@@ -251,7 +247,7 @@ public class Proyecto extends javax.swing.JFrame {
 					anios[i] = ""+ aux;
 				}
 				ComboBoxModel jComboBox4Model = 
-					new DefaultComboBoxModel(anios);
+					new DefaultComboBoxModel(Utils.anios());
 				cbxFinAño = new JComboBox();
 				getContentPane().add(cbxFinAño);
 				cbxFinAño.setModel(jComboBox4Model);

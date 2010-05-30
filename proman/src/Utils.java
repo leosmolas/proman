@@ -1,6 +1,14 @@
 import javax.swing.*;
 
 public class Utils {
+	public static String[] anios() {
+		String[] anios = new String[90];
+		for(int i=0;i<90;i++){
+			int aux = i+2010;
+			anios[i] = ""+ aux;
+		}
+		return anios;
+	}
 	
 	public static boolean esBisiesto(int year) {
 	    return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);

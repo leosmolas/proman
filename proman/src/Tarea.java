@@ -21,6 +21,8 @@ import javax.swing.ListModel;
 
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.SwingUtilities;
 
 
@@ -156,6 +158,7 @@ public class Tarea extends javax.swing.JFrame {
 		try {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			getContentPane().setLayout(null);
+			String [] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"}; 
 			this.addWindowListener(new WindowAdapter() {
 				public void windowClosed(WindowEvent evt) {
 					thisWindowClosed(evt);
@@ -201,6 +204,11 @@ public class Tarea extends javax.swing.JFrame {
 				lstTarea.setFont(new java.awt.Font("Arial",0,10));
 				lstTarea.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				lstTarea.setBounds(312, 68, 242, 105);
+				lstTarea.addListSelectionListener(new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent evt) {
+						lstTareaValueChanged(evt);
+					}
+				});
 			}
 			{
 				txtID = new JTextField();
@@ -236,8 +244,7 @@ public class Tarea extends javax.swing.JFrame {
 			}
 			{
 				ComboBoxModel cbxInicioDiaModel = 
-					new DefaultComboBoxModel(
-							new String[] { "Item One", "Item Two" });
+					new DefaultComboBoxModel();
 				cbxInicioDia = new JComboBox();
 				getContentPane().add(cbxInicioDia);
 				cbxInicioDia.setModel(cbxInicioDiaModel);
@@ -255,52 +262,67 @@ public class Tarea extends javax.swing.JFrame {
 			}
 			{
 				ComboBoxModel cbxInicioMesModel = 
-					new DefaultComboBoxModel(
-							new String[] { "Item One", "Item Two" });
+					new DefaultComboBoxModel(meses);
 				cbxInicioMes = new JComboBox();
 				getContentPane().add(cbxInicioMes);
 				cbxInicioMes.setModel(cbxInicioMesModel);
 				cbxInicioMes.setFont(new java.awt.Font("Arial",0,10));
 				cbxInicioMes.setPreferredSize(new java.awt.Dimension(61,21));
 				cbxInicioMes.setBounds(173, 130, 61, 21);
+				cbxInicioMes.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						cbxInicioActionPerformed(evt);
+					}
+				});
 			}
 			{
 				ComboBoxModel cbxInicioAñoModel = 
-					new DefaultComboBoxModel(
-							new String[] { "Item One", "Item Two" });
+					new DefaultComboBoxModel(Utils.anios());
 				cbxInicioAño = new JComboBox();
 				getContentPane().add(cbxInicioAño);
 				cbxInicioAño.setModel(cbxInicioAñoModel);
 				cbxInicioAño.setFont(new java.awt.Font("Arial",0,10));
 				cbxInicioAño.setPreferredSize(new java.awt.Dimension(54,21));
 				cbxInicioAño.setBounds(246, 130, 54, 21);
+				cbxInicioAño.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						cbxInicioActionPerformed(evt);
+					}
+				});
 			}
 			{
 				ComboBoxModel cbxFinAñoModel = 
-					new DefaultComboBoxModel(
-							new String[] { "Item One", "Item Two" });
+					new DefaultComboBoxModel(Utils.anios());
 				cbxFinAño = new JComboBox();
 				getContentPane().add(cbxFinAño);
 				cbxFinAño.setModel(cbxFinAñoModel);
 				cbxFinAño.setFont(new java.awt.Font("Arial",0,10));
 				cbxFinAño.setPreferredSize(new java.awt.Dimension(54,21));
 				cbxFinAño.setBounds(246, 156, 54, 21);
+				cbxFinAño.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						cbxFinActionPerformed(evt);
+					}
+				});
 			}
 			{
 				ComboBoxModel cbxFinMesModel = 
-					new DefaultComboBoxModel(
-							new String[] { "Item One", "Item Two" });
+					new DefaultComboBoxModel(meses);
 				cbxFinMes = new JComboBox();
 				getContentPane().add(cbxFinMes);
 				cbxFinMes.setModel(cbxFinMesModel);
 				cbxFinMes.setFont(new java.awt.Font("Arial",0,10));
 				cbxFinMes.setPreferredSize(new java.awt.Dimension(61,21));
 				cbxFinMes.setBounds(173, 156, 61, 21);
+				cbxFinMes.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						cbxFinActionPerformed(evt);
+					}
+				});
 			}
 			{
 				ComboBoxModel cbxFinDiaModel = 
-					new DefaultComboBoxModel(
-							new String[] { "Item One", "Item Two" });
+					new DefaultComboBoxModel();
 				cbxFinDia = new JComboBox();
 				getContentPane().add(cbxFinDia);
 				cbxFinDia.setModel(cbxFinDiaModel);
@@ -337,6 +359,8 @@ public class Tarea extends javax.swing.JFrame {
 			}
 			pack();
 			this.setSize(574, 266);
+			Utils.updateDias(cbxInicioDia,cbxInicioMes,cbxInicioAño);
+			Utils.updateDias(cbxFinDia,cbxFinMes,cbxFinAño);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -357,6 +381,67 @@ public class Tarea extends javax.swing.JFrame {
 	private void btnCancelActionPerformed(ActionEvent evt) {
 		frmParent.setVisible(true);
 		this.dispose();
+	}
+	
+	private void lstTareaValueChanged(ListSelectionEvent evt) {
+		String evName , evID;
+		
+		if (lstTarea.getSelectedIndices().length>0) {
+			evName = getDescripcion(lstTarea.getSelectedValue().toString());
+			evID   = getID(lstTarea.getSelectedValue().toString());
+	
+			if (evID.equals("0")){
+				//si seleccionó para crear un nuevo evento
+				cleanForm();
+				btnEliminar.setEnabled(false);
+			} else {
+				btnEliminar.setEnabled(true);
+				try {
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
+					
+					String query = "select descripcion, fecha_inicio, fecha_fin, descripcion from tareas where id_tarea = " + evID;
+					ResultSet rs = stmt.executeQuery(query);
+					
+					if(rs.next()){
+						txtID.setText(evID);						
+						edpDescripcion.setText(rs.getString("descripcion"));
+						Utils.setDate(rs.getString("fecha_inicio"), cbxInicioDia, cbxInicioMes, cbxInicioAño);
+						Utils.setDate(rs.getString("fecha_fin"), cbxFinDia, cbxFinMes, cbxFinAño);						
+					}else{
+						cleanForm();
+					}
+					rs.close();
+					conexionDB.desconectarBD();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void cleanForm() {
+		edpDescripcion.setText("");
+		txtID.setText("");
+		cbxFinAño.setSelectedIndex(0);
+		cbxFinMes.setSelectedIndex(0);
+		cbxFinDia.setSelectedIndex(0);
+		cbxInicioAño.setSelectedIndex(0);
+		cbxInicioDia.setSelectedIndex(0);
+		cbxInicioMes.setSelectedIndex(0);
+	}
+
+	private String getDescripcion(String string) {
+		return string.substring(string.indexOf('-')+1);
+	}
+	
+	private void cbxInicioActionPerformed(ActionEvent evt) {
+		Utils.updateDias(cbxInicioDia,cbxInicioMes,cbxInicioAño);
+	}
+	
+	private void cbxFinActionPerformed(ActionEvent evt) {
+		Utils.updateDias(cbxFinDia,cbxFinMes,cbxFinAño);
 	}
 
 }
