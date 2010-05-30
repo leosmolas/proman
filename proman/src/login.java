@@ -74,11 +74,6 @@ public class login extends javax.swing.JFrame {
 			this.setPreferredSize(new java.awt.Dimension(272, 125));
 			this.setAlwaysOnTop(true);
 			this.setResizable(false);
-			this.addWindowListener(new WindowAdapter() {
-				public void windowIconified(WindowEvent evt) {
-					thisWindowIconified(evt);
-				}
-			});
 			{
 				btnAceptar = new JButton();
 				getContentPane().add(btnAceptar);
@@ -177,11 +172,6 @@ public class login extends javax.swing.JFrame {
 		System.out.println("btnCancelar.actionPerformed, event="+evt);
 		this.dispose();
 	}
-	
-	//PREGUNTA: ¿Qué es esto?
-	private void thisWindowIconified(WindowEvent evt) {
-		System.out.println("this.windowIconified, event="+evt);
-		//TODO add your code for this.windowIconified
-	}
+
 
 }

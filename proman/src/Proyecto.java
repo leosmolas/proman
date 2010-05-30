@@ -392,8 +392,6 @@ public class Proyecto extends javax.swing.JFrame {
 		this.dispose();
 	}
 	
-	
-	
 	private void setDate(String yyyyMMdd, JComboBox cbxDia, JComboBox cbxMes, JComboBox cbxAnio){
 		//formato de fecha de entrada: yyyy-MM-dd
 		cbxAnio.setSelectedItem(yyyyMMdd.substring(0, 4));

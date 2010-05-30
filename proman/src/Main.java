@@ -25,12 +25,9 @@ import javax.swing.SwingUtilities;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class Main extends javax.swing.JFrame {
-	private JButton btnCrearProyecto;
-	private JButton jButton1;
-	private JButton jButton2;
-	private JButton btn;
-	private JButton jButton4;
-	private JButton jButton3;
+	private JButton btnAdminProyecto;
+	private JButton btnAdminGrupos;
+	private JButton btnCrearReporte;
 	private Conexion conexionBD = null;
 	private String currentUser;
 
@@ -100,51 +97,35 @@ public class Main extends javax.swing.JFrame {
 				}
 			});
 			{
-				btnCrearProyecto = new JButton();
-				getContentPane().add(btnCrearProyecto);
-				btnCrearProyecto.setText("Administrar Proyecto");
-				btnCrearProyecto.setBounds(46, 12, 147, 21);
-				btnCrearProyecto.setFont(new java.awt.Font("Arial",0,10));
-				btnCrearProyecto.addActionListener(new ActionListener() {
+				btnAdminProyecto = new JButton();
+				getContentPane().add(btnAdminProyecto);
+				btnAdminProyecto.setText("Administrar Proyecto");
+				btnAdminProyecto.setBounds(46, 12, 147, 21);
+				btnAdminProyecto.setFont(new java.awt.Font("Arial",0,10));
+				btnAdminProyecto.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						btnCrearProyectoActionPerformed(evt);
+						btnAdminProyectoActionPerformed(evt);
 					}
 				});
 			}
 			{
-				jButton1 = new JButton();
-				getContentPane().add(jButton1);
-				jButton1.setText("Administrar Grupos");
-				jButton1.setFont(new java.awt.Font("Arial",0,10));
-				jButton1.setBounds(46, 45, 147, 21);
+				btnAdminGrupos = new JButton();
+				getContentPane().add(btnAdminGrupos);
+				btnAdminGrupos.setText("Administrar Grupos");
+				btnAdminGrupos.setFont(new java.awt.Font("Arial",0,10));
+				btnAdminGrupos.setBounds(46, 45, 147, 21);
+				btnAdminGrupos.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnAdminGruposActionPerformed(evt);
+					}
+				});
 			}
 			{
-				jButton2 = new JButton();
-				getContentPane().add(jButton2);
-				jButton2.setText("Crear Reporte");
-				jButton2.setFont(new java.awt.Font("Arial",0,10));
-				jButton2.setBounds(46, 45, 147, 21);
-			}
-			{
-				jButton3 = new JButton();
-				getContentPane().add(jButton3);
-				jButton3.setText("Crear Reporte");
-				jButton3.setFont(new java.awt.Font("Arial",0,10));
-				jButton3.setBounds(46, 45, 147, 21);
-			}
-			{
-				jButton4 = new JButton();
-				getContentPane().add(jButton4);
-				jButton4.setText("Crear Reporte");
-				jButton4.setFont(new java.awt.Font("Arial",0,10));
-				jButton4.setBounds(46, 45, 147, 21);
-			}
-			{
-				btn = new JButton();
-				getContentPane().add(btn);
-				btn.setText("Crear Reporte");
-				btn.setBounds(46, 78, 147, 21);
-				btn.setFont(new java.awt.Font("Arial",0,10));
+				btnCrearReporte = new JButton();
+				getContentPane().add(btnCrearReporte);
+				btnCrearReporte.setText("Crear Reporte");
+				btnCrearReporte.setBounds(46, 78, 147, 21);
+				btnCrearReporte.setFont(new java.awt.Font("Arial",0,10));
 			}
 			pack();
 		} catch (Exception e) {
@@ -152,7 +133,7 @@ public class Main extends javax.swing.JFrame {
 		}
 	}
 	
-	private void btnCrearProyectoActionPerformed(ActionEvent evt) {
+	private void btnAdminProyectoActionPerformed(ActionEvent evt) {
 		Proyecto frmProyecto = new Proyecto(this, conexionBD);
 		this.setVisible(false);
 		frmProyecto.setVisible(true);
@@ -160,6 +141,12 @@ public class Main extends javax.swing.JFrame {
 	
 	private void thisWindowClosing(WindowEvent evt) {
 		this.dispose();
+	}
+	
+	private void btnAdminGruposActionPerformed(ActionEvent evt) {
+		Grupo frmGrupo= new Grupo();
+		this.setVisible(false);
+		frmGrupo.setVisible(true);
 	}
 
 }

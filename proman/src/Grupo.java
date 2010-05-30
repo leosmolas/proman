@@ -1,3 +1,12 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -10,6 +19,8 @@ import javax.swing.ListModel;
 
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.SwingUtilities;
@@ -33,18 +44,20 @@ public class Grupo extends javax.swing.JFrame {
 	private JList lstGrupos;
 	private JTable tblUsuarios;
 	private JButton btnEditarRol;
-	private JButton btnOk;
+	private JButton btnGuardarGrupo;
 	private JButton btnCancel;
-	private JButton btnAIzq;
-	private JButton btnADer;
+	private JButton btnEliminar;
+	private JButton btnAgregar;
 	private JLabel lblGrupo;
 	private JLabel lblID;
 	private JTextField txtNombre;
 	private JLabel lblNombre;
-	private JButton btnEliminar;
+	private JButton btnEliminarGrupo;
 	private JTextField txtID;
 	private JLabel lblDescripcion;
-
+	private Conexion conexionDB;
+	private Main frmPrincipal;
+	
 	/**
 	* Auto-generated main method to display this JFrame
 	*/
@@ -63,31 +76,72 @@ public class Grupo extends javax.swing.JFrame {
 		initGUI();
 	}
 	
+	public Grupo(Main parent, Conexion dbConnection) {
+		super();
+		initGUI();
+		
+		conexionDB = dbConnection;
+		frmPrincipal = parent;
+		/*
+		 * si fue llamado desde la pantalla main,
+		 * tiene que mostrar los grupos asociados a los proyectos de los cuales el usuario es jefe
+		 * si fue llamado desde la pantalla de proyecto
+		 * tiene que mostrar los grupos asociados al proyecto seleccionado en la pantalla de 
+		 * */
+		//populateList();
+		//lstProyectos.setSelectedIndex(0);
+	}
+	
+	private void populateList() {
+		Statement stmt;
+		String    query; 
+		String[] stringArr;
+		ResultSet rs;
+		int cantResults, i;
+		try {
+			conexionDB.conectarBD();			
+			stmt  = conexionDB.statement();			
+			query = "select id_proyecto, nombre from proyectos";
+			rs    = stmt.executeQuery(query);
+			rs.last();
+			cantResults = rs.getRow();
+			rs.beforeFirst();
+			i = 0;
+			stringArr = new String[cantResults + 1];
+			
+			for(i = 0; i < cantResults; i++) {
+				rs.next();
+				stringArr[i] = rs.getString("id_proyecto") + "-" + rs.getString("nombre");
+			}
+			
+			stringArr[i] = "0-CREAR NUEVO PROYECTO"; 
+			
+			//lstProyectos.setModel(new DefaultComboBoxModel(stringArr));
+			//lstProyectos.setSelectedIndex(0);
+			stmt.close();
+			conexionDB.desconectarBD();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void initGUI() {
 		try {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			this.setTitle("Proyect Manager: Grupo");
 			getContentPane().setLayout(null);
 			this.setPreferredSize(new java.awt.Dimension(560, 371));
-			{
-				edpDescripcion = new JEditorPane();
-				getContentPane().add(edpDescripcion);
-				edpDescripcion.setBounds(92, 66, 277, 58);
-				edpDescripcion.setFont(new java.awt.Font("Arial",0,10));
-				edpDescripcion.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-			}
+			this.addWindowListener(new WindowAdapter() {
+				public void windowClosed(WindowEvent evt) {
+					thisWindowClosed(evt);
+				}
+			});
 			{
 				lblDescripcion = new JLabel();
 				getContentPane().add(lblDescripcion);
 				lblDescripcion.setText("Descripción");
 				lblDescripcion.setBounds(12, 68, 74, 14);
 				lblDescripcion.setFont(new java.awt.Font("Arial",0,10));
-			}
-			{
-				txtID = new JTextField();
-				getContentPane().add(txtID);
-				txtID.setBounds(92, 12, 132, 21);
-				txtID.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				lblID = new JLabel();
@@ -104,18 +158,60 @@ public class Grupo extends javax.swing.JFrame {
 				lblGrupo.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
-				btnADer = new JButton();
-				getContentPane().add(btnADer);
-				btnADer.setText("Agregar");
-				btnADer.setBounds(287, 159, 82, 21);
-				btnADer.setFont(new java.awt.Font("Arial",0,10));
+				lblGrupos = new JLabel();
+				getContentPane().add(lblGrupos);
+				lblGrupos.setText("Grupos");
+				lblGrupos.setBounds(381, 15, 71, 14);
+				lblGrupos.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
-				btnAIzq = new JButton();
-				getContentPane().add(btnAIzq);
-				btnAIzq.setText("Eliminar");
-				btnAIzq.setBounds(287, 192, 82, 21);
-				btnAIzq.setFont(new java.awt.Font("Arial",0,10));
+				lblNombre = new JLabel();
+				getContentPane().add(lblNombre);
+				lblNombre.setText("Nombre");
+				lblNombre.setBounds(12, 42, 37, 14);
+				lblNombre.setFont(new java.awt.Font("Arial",0,10));
+			}
+			{
+				txtID = new JTextField();
+				getContentPane().add(txtID);
+				txtID.setBounds(92, 12, 132, 21);
+				txtID.setFont(new java.awt.Font("Arial",0,10));
+			}
+			{
+				txtNombre = new JTextField();
+				getContentPane().add(txtNombre);
+				txtNombre.setBounds(92, 39, 132, 21);
+			}
+			{
+				edpDescripcion = new JEditorPane();
+				getContentPane().add(edpDescripcion);
+				edpDescripcion.setBounds(92, 66, 277, 58);
+				edpDescripcion.setFont(new java.awt.Font("Arial",0,10));
+				edpDescripcion.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+			}
+			{
+				btnAgregar = new JButton();
+				getContentPane().add(btnAgregar);
+				btnAgregar.setText("Agregar");
+				btnAgregar.setBounds(287, 159, 82, 21);
+				btnAgregar.setFont(new java.awt.Font("Arial",0,10));
+				btnAgregar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnAgregarActionPerformed(evt);
+					}
+				});
+			}
+			{
+				btnEliminar = new JButton();
+				getContentPane().add(btnEliminar);
+				btnEliminar.setText("Eliminar");
+				btnEliminar.setBounds(287, 192, 82, 21);
+				btnEliminar.setFont(new java.awt.Font("Arial",0,10));
+				btnEliminar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnEliminarActionPerformed(evt);
+					}
+				});
 			}
 			{
 				btnCancel = new JButton();
@@ -123,13 +219,11 @@ public class Grupo extends javax.swing.JFrame {
 				btnCancel.setText("Cancelar");
 				btnCancel.setBounds(458, 308, 82, 21);
 				btnCancel.setFont(new java.awt.Font("Arial",0,10));
-			}
-			{
-				btnOk = new JButton();
-				getContentPane().add(btnOk);
-				btnOk.setText("Guardar Grupo");
-				btnOk.setBounds(327, 308, 119, 21);
-				btnOk.setFont(new java.awt.Font("Arial",0,10));
+				btnCancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnCancelActionPerformed(evt);
+					}
+				});
 			}
 			{
 				btnEditarRol = new JButton();
@@ -137,6 +231,35 @@ public class Grupo extends javax.swing.JFrame {
 				btnEditarRol.setText("Editar Rol");
 				btnEditarRol.setBounds(287, 225, 82, 21);
 				btnEditarRol.setFont(new java.awt.Font("Arial",0,10));
+				btnEditarRol.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnEditarRolActionPerformed(evt);
+					}
+				});
+			}
+			{
+				btnGuardarGrupo = new JButton();
+				getContentPane().add(btnGuardarGrupo);
+				btnGuardarGrupo.setText("Guardar Grupo");
+				btnGuardarGrupo.setBounds(327, 308, 119, 21);
+				btnGuardarGrupo.setFont(new java.awt.Font("Arial",0,10));
+				btnGuardarGrupo.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnGuardarGrupoActionPerformed(evt);
+					}
+				});
+			}
+			{
+				btnEliminarGrupo = new JButton();
+				getContentPane().add(btnEliminarGrupo);
+				btnEliminarGrupo.setText("Eliminar Grupo");
+				btnEliminarGrupo.setFont(new java.awt.Font("Arial",0,10));
+				btnEliminarGrupo.setBounds(194, 308, 121, 21);
+				btnEliminarGrupo.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnEliminarGrupoActionPerformed(evt);
+					}
+				});
 			}
 			{
 				TableModel tblUsuariosModel = 
@@ -159,37 +282,47 @@ public class Grupo extends javax.swing.JFrame {
 				lstGrupos.setBounds(381, 39, 159, 257);
 				lstGrupos.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				lstGrupos.setFont(new java.awt.Font("Arial",0,10));
-			}
-			{
-				lblGrupos = new JLabel();
-				getContentPane().add(lblGrupos);
-				lblGrupos.setText("Grupos");
-				lblGrupos.setBounds(381, 15, 71, 14);
-				lblGrupos.setFont(new java.awt.Font("Arial",0,10));
-			}
-			{
-				btnEliminar = new JButton();
-				getContentPane().add(btnEliminar);
-				btnEliminar.setText("Eliminar Grupo");
-				btnEliminar.setFont(new java.awt.Font("Arial",0,10));
-				btnEliminar.setBounds(194, 308, 121, 21);
-			}
-			{
-				lblNombre = new JLabel();
-				getContentPane().add(lblNombre);
-				lblNombre.setText("Nombre");
-				lblNombre.setBounds(12, 42, 37, 14);
-				lblNombre.setFont(new java.awt.Font("Arial",0,10));
-			}
-			{
-				txtNombre = new JTextField();
-				getContentPane().add(txtNombre);
-				txtNombre.setBounds(92, 39, 132, 21);
+				lstGrupos.addListSelectionListener(new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent evt) {
+						lstGruposValueChanged(evt);
+					}
+				});
 			}
 			pack();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void btnAgregarActionPerformed(ActionEvent evt) {
+	}
+	
+	private void btnEliminarActionPerformed(ActionEvent evt) {
+	}
+	
+	private void btnEditarRolActionPerformed(ActionEvent evt) {
+		@SuppressWarnings("unused")
+		Rol frmRol;
+		frmRol = new Rol();
+	}
+	
+	private void btnEliminarGrupoActionPerformed(ActionEvent evt) {
+	}
+	
+	private void btnGuardarGrupoActionPerformed(ActionEvent evt) {
+	}
+	
+	private void btnCancelActionPerformed(ActionEvent evt) {
+		frmPrincipal.setVisible(true);
+		this.dispose();
+		}
+	
+	private void thisWindowClosed(WindowEvent evt) {
+		frmPrincipal.setVisible(true);
+		this.dispose();
+	}
+	
+	private void lstGruposValueChanged(ListSelectionEvent evt) {
 	}
 
 }
