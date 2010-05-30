@@ -1,30 +1,22 @@
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Vector;
-
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
@@ -32,7 +24,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -326,7 +317,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				ListModel lstProyectosModel = new DefaultComboBoxModel();
 				lstProyectos = new JList();
 				lstProyectos.setModel(lstProyectosModel);
-				lstProyectos.setBounds(296, 38, 192, 189);
+				lstProyectos.setBounds(295, 37, 192, 189);
 				getContentPane().add(lstProyectos);
 				lstProyectos.setFont(new java.awt.Font("Tahoma",0,10));
 				lstProyectos.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -381,6 +372,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			conexionDB.desconectarBD();
 			
 			lstProyectos.setModel(model);
+			
 			lstProyectos.setSelectedIndex(0);
 			
 		} catch (SQLException e) {
@@ -423,6 +415,16 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
 	private void setUserControls(boolean enable, boolean editable) {
+		txtJefe.setEditable(enable && editable);
+		txtNombre.setEditable(enable && editable);
+		edpDescripcion.setEditable(enable && editable);
+		cbxInicioDia.setEnabled(enable && editable);
+		cbxInicioMes.setEnabled(enable && editable);
+		cbxInicioAño.setEnabled(enable && editable);
+		cbxFinDia.setEnabled(enable && editable);
+		cbxFinMes.setEnabled(enable && editable);
+		cbxFinAño.setEnabled(enable && editable);
+		cbxEstado.setEnabled(enable && editable);
 		btnAdminEvento.setEnabled(enable && editable);
 		btnAdminTarea.setEnabled(enable && editable);
 		btnAdminGrupo.setEnabled(enable && editable);
@@ -479,7 +481,6 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				setDate(currentDate, cbxFinDia, cbxFinMes, cbxFinAño);
 			} else {
 				//seleccionó un proyecto ya existente
-				cbxEstado.setEnabled(true);
 				try {
 					conexionDB.conectarBD();
 					Statement stmt = conexionDB.statement();
@@ -534,6 +535,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 					
 					stmt.executeUpdate(query);
 					cbxEstado.setSelectedItem("Cancelado");
+					populateList();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -553,6 +555,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 						
 						stmt.executeUpdate(query);
 						cbxEstado.setSelectedItem("Cancelado");
+						populateList();
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
