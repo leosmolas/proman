@@ -389,10 +389,10 @@ public class Tarea extends javax.swing.JFrame {
 		boolean allGrupos = getID(cbxGrupos.getSelectedItem().toString()).equals("0");
 		boolean newTarea = false;
 		if (lstTarea.getSelectedIndices().length>0) {
-			 newTarea = !getID(lstTarea.getSelectedValue().toString()).equals("0");
+			 newTarea = getID(lstTarea.getSelectedValue().toString()).equals("0");
 		}		
-		btnOk.setEnabled(newTarea && !allGrupos);
-		btnEliminar.setEnabled((newTarea && !allGrupos)||(allGrupos && lstTarea.getSelectedIndices().length>0));		
+		btnOk.setEnabled(newTarea || !allGrupos);
+		btnEliminar.setEnabled((!newTarea && !allGrupos)||(allGrupos && lstTarea.getSelectedIndices().length>0));		
 	}
 
 	private void thisWindowClosed(WindowEvent evt) {
