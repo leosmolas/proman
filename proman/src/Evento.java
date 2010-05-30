@@ -486,7 +486,7 @@ public class Evento extends javax.swing.JFrame {
 	
 	private void btnEliminarActionPerformed(ActionEvent evt) {
 		String evID   = getCurrentEventtID();
-		String evName = getCurrentEventName();
+		
 		int ok;
 		if (evID.equals("0")) {
 			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún evento para eliminar!.", "¡Cuidado!", JOptionPane.WARNING_MESSAGE);

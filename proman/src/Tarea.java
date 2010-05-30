@@ -455,8 +455,30 @@ public class Tarea extends javax.swing.JFrame {
 	}
 	
 	private void btnEliminarActionPerformed(ActionEvent evt) {
-		System.out.println("btnEliminar.actionPerformed, event="+evt);
-		//TODO add your code for btnEliminar.actionPerformed
+		String tareaID = getID(lstTarea.getSelectedValue().toString());
+		
+		int ok;
+		if (tareaID.equals("0")) {
+			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún evento para eliminar!.", "¡Cuidado!", JOptionPane.WARNING_MESSAGE);
+		}
+		else {
+			ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea eliminar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (ok == JOptionPane.OK_OPTION) {
+				try {
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
+					String query = "DELETE FROM tareas WHERE id_tarea = " + tareaID;
+					System.out.println("delete: " + query);
+					stmt.executeUpdate(query);
+					stmt.close();
+					conexionDB.desconectarBD();
+					populateList();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	private void btnOkActionPerformed(ActionEvent evt) {
