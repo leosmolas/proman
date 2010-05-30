@@ -123,6 +123,7 @@ public class Tarea extends javax.swing.JFrame {
 
 	private void populateList() {
 		int cantResults,i;
+		String[] stringArr;
 		try {
 			conexionDB.conectarBD();			
 			Statement stmt = conexionDB.statement();
@@ -130,17 +131,18 @@ public class Tarea extends javax.swing.JFrame {
 			String query = "select id_tarea, descripcion from tareas where proyecto = " + idProyecto;			
 			if (!idGrupo.equals("0")) 
 				query += " and grupo = " + idGrupo;
+
 			ResultSet rs = stmt.executeQuery(query);			
 			rs.last();
 			cantResults = rs.getRow();
+			stringArr = new String[cantResults+((idGrupo.equals("0"))?0:1)];
 			rs.beforeFirst();
-			i=0;
-			String[] stringArr = new String[cantResults+1];
 			for(i=0;i<cantResults;i++){
 				rs.next();
 				stringArr[i] = rs.getString("id_tarea") + "-"+ rs.getString("descripcion");
 			}			
-			stringArr[i] = "0-CREAR NUEVA TAREA";
+			if (!idGrupo.equals("0")) 
+				stringArr[i] = "0-CREAR NUEVA TAREA PARA ESTE GRUPO";
 			lstTarea.setModel(new DefaultComboBoxModel(stringArr));
 			lstTarea.setSelectedIndex(0);
 			stmt.close();
@@ -178,8 +180,7 @@ public class Tarea extends javax.swing.JFrame {
 			}
 			{
 				ComboBoxModel cbxGruposModel = 
-					new DefaultComboBoxModel(
-							new String[] { "Item One", "Item Two" });
+					new DefaultComboBoxModel();
 				cbxGrupos = new JComboBox();
 				getContentPane().add(cbxGrupos);
 				cbxGrupos.setModel(cbxGruposModel);
@@ -380,8 +381,8 @@ public class Tarea extends javax.swing.JFrame {
 		boolean enable = !getID(cbxGrupos.getSelectedItem().toString()).equals("0");
 
 		populateList();
-		btnEliminar.setEnabled(enable);
-		btnOk.setEnabled(enable);
+//		btnEliminar.setEnabled(enable);
+//		btnOk.setEnabled(enable);
 	}
 	
 	private void thisWindowClosed(WindowEvent evt) {
@@ -442,10 +443,6 @@ public class Tarea extends javax.swing.JFrame {
 		cbxInicioMes.setSelectedIndex(0);
 	}
 
-	private String getDescripcion(String string) {
-		return string.substring(string.indexOf('-')+1);
-	}
-	
 	private void cbxInicioActionPerformed(ActionEvent evt) {
 		Utils.updateDias(cbxInicioDia,cbxInicioMes,cbxInicioAño);
 	}
