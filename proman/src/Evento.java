@@ -67,19 +67,7 @@ public class Evento extends javax.swing.JFrame {
 	private String inicioProy;
 	private String finProy;
 
-//	/**
-//	* Auto-generated main method to display this JFrame
-//	*/
-//	public static void main(String[] args) {
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				Evento inst = new Evento();
-//				inst.setLocationRelativeTo(null);
-//				inst.setVisible(true);
-//			}
-//		});
-//	}
-//	
+
 	public Evento(JFrame parent,Conexion dbConnection,String proy,String id) {
 		super();
 		initGUI();
@@ -240,6 +228,7 @@ public class Evento extends javax.swing.JFrame {
 				txtNombre = new JTextField();
 				getContentPane().add(txtNombre);
 				txtNombre.setBounds(98, 38, 132, 21);
+				txtNombre.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
 			{
 				lblNombre = new JLabel();
@@ -436,7 +425,7 @@ public class Evento extends javax.swing.JFrame {
 				if (inicioProy.compareTo(fecha) <= 0){
 					if (fecha.compareTo(finProy) <= 0) {
 						//System.out.println("Fechita re ok");
-						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea crear el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 						if (ok == JOptionPane.OK_OPTION) {
 							conexionDB.conectarBD();
 							Statement stmt = conexionDB.statement();
@@ -500,7 +489,7 @@ public class Evento extends javax.swing.JFrame {
 	
 	private void btnEliminarActionPerformed(ActionEvent evt) {
 		String evID   = getCurrentEventtID();
-		String evName = getCurrentEventName();
+		
 		int ok;
 		if (evID.equals("0")) {
 			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún evento para eliminar!.", "¡Cuidado!", JOptionPane.WARNING_MESSAGE);

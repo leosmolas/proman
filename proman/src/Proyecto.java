@@ -97,7 +97,7 @@ public class Proyecto extends javax.swing.JFrame {
 	}
 	private void initGUI() {
 		try {
-setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			this.setTitle("Project Manager: Proyecto");
 			getContentPane().setLayout(null);
 			this.setPreferredSize(new java.awt.Dimension(674, 304));
@@ -196,13 +196,9 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				cbxInicioMes.setSelectedIndex(0);
 			}
 			{
-				String[] anios = new String[90];
-				for(int i=0;i<90;i++){
-					int aux = i+2010;
-					anios[i] = ""+ aux;
-				}
+
 				ComboBoxModel cbxInicioAñoModel = 
-					new DefaultComboBoxModel(anios);
+					new DefaultComboBoxModel(Utils.anios());
 				cbxInicioAño = new JComboBox();
 				getContentPane().add(cbxInicioAño);
 				cbxInicioAño.setModel(cbxInicioAñoModel);
@@ -246,7 +242,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 					anios[i] = ""+ aux;
 				}
 				ComboBoxModel jComboBox4Model = 
-					new DefaultComboBoxModel(anios);
+					new DefaultComboBoxModel(Utils.anios());
 				cbxFinAño = new JComboBox();
 				getContentPane().add(cbxFinAño);
 				cbxFinAño.setModel(jComboBox4Model);
@@ -320,6 +316,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				lstProyectos.setBounds(295, 37, 192, 189);
 				getContentPane().add(lstProyectos);
 				lstProyectos.setFont(new java.awt.Font("Tahoma",0,10));
+				lstProyectos.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				lstProyectos.addListSelectionListener(new ListSelectionListener() {
 					public void valueChanged(ListSelectionEvent evt) {
 						lstProyectosValueChanged(evt);
@@ -334,7 +331,12 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				getContentPane().add(getJTextField1());
 				btnAdminTarea.setText("Administrar Tarea");
 				btnAdminTarea.setFont(new java.awt.Font("Tahoma",0,10));
-				btnAdminTarea.setBounds(499, 64, 154, 21);
+				btnAdminTarea.setBounds(500, 64, 154, 21);
+				btnAdminTarea.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnAdminTareaActionPerformed(evt);
+					}
+				});
 			}
 			{
 				
@@ -677,6 +679,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			cbxEstado = new JComboBox();
 			cbxEstado.setModel(cbxEstadoModel);
 			cbxEstado.setBounds(96, 241, 188, 21);
+			cbxEstado.setFont(new java.awt.Font("Arial",0,10));
 		}
 		return cbxEstado;
 	}
@@ -702,6 +705,39 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		}
 	}
 	
+	private void btnAdminTareaActionPerformed(ActionEvent evt) {
+		//System.out.println("btnAdminEvento.actionPerformed, event="+evt);
+		String id = getCurrentProjectID();
+		if (!id.equals("0")){
+			try {
+				conexionDB.conectarBD();
+				Statement stmt = conexionDB.statement();
+				
+				String query = "select id_grupo from grupos where proyecto = " + getCurrentProjectID();
+				ResultSet rs = stmt.executeQuery(query);
+				//con esto me fijo si tiene grupos asociados. Si no, ni abro la ventana
+				if(rs.next()){
+					this.setVisible(false);
+					rs.close();
+					conexionDB.desconectarBD();
+					Tarea tarea = new Tarea(this,conexionDB,getCurrentProjectName(),id);
+					tarea.setVisible(true);					
+				}else{
+					JOptionPane.showMessageDialog(this, "El proyecto que ha seleccionado no tiene aún ningún grupo asociado. Cree un grupo en el proyecto para asignarle tareas.", 
+							"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
+					rs.close();
+					conexionDB.desconectarBD();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else 
+			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún proyecto.", 
+												"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
+	}
+
 	private JButton getBtnAdminGrupo() {
 		if(btnAdminGrupo == null) {
 			btnAdminGrupo = new JButton();
