@@ -353,7 +353,9 @@ public class Evento extends javax.swing.JFrame {
 			if (evID.equals("0")){
 				//si seleccionó para crear un nuevo evento
 				cleanForm();
-			} else {			
+				btnEliminar.setEnabled(false);
+			} else {
+				btnEliminar.setEnabled(true);
 				try {
 					conexionDB.conectarBD();
 					Statement stmt = conexionDB.statement();
