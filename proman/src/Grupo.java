@@ -1,14 +1,18 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -212,11 +216,12 @@ public class Grupo extends javax.swing.JFrame {
 				getContentPane().add(txtID);
 				txtID.setBounds(92, 12, 132, 21);
 				txtID.setFont(new java.awt.Font("Arial",0,10));
+				txtID.setEditable(false);
 			}
 			{
 				txtNombre = new JTextField();
 				getContentPane().add(txtNombre);
-				txtNombre.setBounds(92, 39, 132, 21);
+				txtNombre.setBounds(92, 38, 132, 21);
 			}
 			{
 				edpDescripcion = new JEditorPane();
@@ -299,9 +304,7 @@ public class Grupo extends javax.swing.JFrame {
 			}
 			{
 				TableModel tblUsuariosModel = 
-					new DefaultTableModel(
-							new String[][] { { "Juan Perez", "Jefe" }, { "Jose Gonzalez", "Diseñador" } },
-							new String[] { "Column 1", "Column 2" });
+					new uneditableTableModel();
 				tblUsuarios = new JTable();
 				getContentPane().add(tblUsuarios);
 				tblUsuarios.setModel(tblUsuariosModel);
@@ -346,27 +349,87 @@ public class Grupo extends javax.swing.JFrame {
 	}
 	
 	private void btnGuardarGrupoActionPerformed(ActionEvent evt) {
+		String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
+		String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));
+		String nombreGrupo = selectedLine.substring(selectedLine.indexOf('-')+1);
+		
+		if(idGrupo.equals("0")){
+			//alta
+			String query = "insert on grupos (nombre, descripcion, proyecto) values ";
+		} else {
+			//modificación
+		}
 	}
 	
 	private void btnCancelActionPerformed(ActionEvent evt) {
 		frmPrincipal.setVisible(true);
 		this.dispose();
-		}
+	}
+	
+	private void setUserControls(boolean enable){
+		btnAgregar.setEnabled(enable);
+		btnEliminar.setEnabled(enable);
+		btnEditarRol.setEnabled(enable);
+		btnEliminarGrupo.setEnabled(enable);
+	}
 	
 	private void lstGruposValueChanged(ListSelectionEvent evt) {
 		
-		String nombreGrupo, idGrupo;
+		String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
+		String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));
+		String nombreGrupo = selectedLine.substring(selectedLine.indexOf('-')+1);
 		
-		// get group id
-		nombreGrupo = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
-		idGrupo =  nombreGrupo.substring(0,nombreGrupo.indexOf('-'));
-		
-		
+		if (idGrupo.equals("0")){
+			setUserControls(false);
+			edpDescripcion.setText("");
+			txtID.setText("");
+			txtNombre.setText("Nuevo grupo");
+			tblUsuarios.setModel(new uneditableTableModel());
+		} else {
+			setUserControls(true);
+			String query = "select descripcion from grupos where id_grupo = " + idGrupo;
+			
+			try {
+				conexionDB.conectarBD();
+				Statement stmt = conexionDB.statement();
+				
+				ResultSet rs = stmt.executeQuery(query);
+				
+				if(rs.next()){
+					edpDescripcion.setText(rs.getString("descripcion"));
+					txtID.setText(idGrupo);
+					txtNombre.setText(nombreGrupo);
+					rs.close();
+					
+					String queryUsuarios = "select nombre, descripcion from rol join usuarios where grupo = " + idGrupo + " and usuario = id_usuario";
+					ResultSet rsUsuarios = stmt.executeQuery(queryUsuarios);
+					
+					uneditableTableModel tableModel = new uneditableTableModel();
+					tableModel.addColumn("Nombre");
+					tableModel.addColumn("Rol");
+					while (rsUsuarios.next()){
+						String[] rowData = { rsUsuarios.getString("nombre"), rsUsuarios.getString("descripcion") };
+						tableModel.addRow(rowData);
+					}
+					
+					rsUsuarios.close();
+					
+					tblUsuarios.setModel(tableModel);					
+				}
+				
+				conexionDB.desconectarBD();
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 	}
 	
 	private void thisWindowClosing(WindowEvent evt) {
 		frmPrincipal.setVisible(true);
 		this.dispose();
-		}
+	}
 
 }
