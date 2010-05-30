@@ -329,6 +329,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				lstProyectos.setBounds(296, 38, 192, 189);
 				getContentPane().add(lstProyectos);
 				lstProyectos.setFont(new java.awt.Font("Tahoma",0,10));
+				lstProyectos.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				lstProyectos.addListSelectionListener(new ListSelectionListener() {
 					public void valueChanged(ListSelectionEvent evt) {
 						lstProyectosValueChanged(evt);
@@ -669,6 +670,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			cbxEstado = new JComboBox();
 			cbxEstado.setModel(cbxEstadoModel);
 			cbxEstado.setBounds(96, 241, 188, 21);
+			cbxEstado.setFont(new java.awt.Font("Arial",0,10));
 		}
 		return cbxEstado;
 	}

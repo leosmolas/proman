@@ -112,6 +112,7 @@ public class Tarea extends javax.swing.JFrame {
 				getContentPane().add(txtID);
 				txtID.setPreferredSize(new java.awt.Dimension(132,21));
 				txtID.setBounds(114, 12, 132, 21);
+				txtID.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
 			{
 				lblID = new JLabel();

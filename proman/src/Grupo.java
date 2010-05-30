@@ -88,6 +88,7 @@ public class Grupo extends javax.swing.JFrame {
 				getContentPane().add(txtID);
 				txtID.setBounds(92, 12, 132, 21);
 				txtID.setFont(new java.awt.Font("Arial",0,10));
+				txtID.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
 			{
 				lblID = new JLabel();
@@ -185,6 +186,7 @@ public class Grupo extends javax.swing.JFrame {
 				txtNombre = new JTextField();
 				getContentPane().add(txtNombre);
 				txtNombre.setBounds(92, 39, 132, 21);
+				txtNombre.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
 			pack();
 		} catch (Exception e) {

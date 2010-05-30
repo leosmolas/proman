@@ -240,6 +240,7 @@ public class Evento extends javax.swing.JFrame {
 				txtNombre = new JTextField();
 				getContentPane().add(txtNombre);
 				txtNombre.setBounds(98, 38, 132, 21);
+				txtNombre.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
 			{
 				lblNombre = new JLabel();
