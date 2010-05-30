@@ -505,36 +505,40 @@ public class Tarea extends javax.swing.JFrame {
 			
 		}
 		else{
-			/*try {
-				if (inicioProy.compareTo(fecha) <= 0){
-					if (fecha.compareTo(finProy) <= 0) {
-						//System.out.println("Fechita re ok");
-						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-						if (ok == JOptionPane.OK_OPTION) {
-							conexionDB.conectarBD();
-							Statement stmt = conexionDB.statement();
-							String query ="update eventos set "+ 
-								"fecha = '" + Utils.makeDate(cbxFechaDia, cbxFechaMes, cbxFechaAño) + "', " +
-								"hora_inicio = '" + cbxHora.getSelectedItem() + ":" + cbxMin.getSelectedItem() + ":00', " +
-								"nombre = '" + txtNombre.getText() + "', " +
-								"descripcion = '" + edpDescripcion.getText() + 
-								"' where id_evento = " + evID;
-							System.out.println("query: " + query);
-							stmt.executeUpdate(query);
-							stmt.close();
-							conexionDB.desconectarBD();
+			try {
+				if (inicioProy.compareTo(fechaInicio) <= 0){
+					if (fechaInicio.compareTo(fechaFin) <= 0) {
+						if (fechaFin.compareTo(finProy) <= 0) {
+							//System.out.println("Fechita re ok");
+							ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar tarea?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+							if (ok == JOptionPane.OK_OPTION) {
+								conexionDB.conectarBD();
+								Statement stmt = conexionDB.statement();
+								String query ="update tareas set "+ 
+									"descripcion = '" + edpDescripcion.getText() + "', " +
+									"fecha_inicio = '" + Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "', " +
+									"fecha_fin = '" + Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "'" +
+									" where id_tarea = " + tareaID;
+								System.out.println("query: " + query);
+								stmt.executeUpdate(query);
+								stmt.close();
+								conexionDB.desconectarBD();
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(this, "La fecha de fin de la tarea no puede ser posterior al fin del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					else {
-						JOptionPane.showMessageDialog(this, "La fecha no puede ser posterior al fin del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(this, "La fecha de inicio de la tarea no puede ser posterior al fin dela tarea.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
 					}
 				}else{
-					JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior al comienzo del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "La fecha de inicio de la tarea no puede ser anterior al comienzo del proyecto	.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
 				}
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
-			}*/
+			}
 		}		
 		populateList();
 	}
