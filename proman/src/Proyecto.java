@@ -1,17 +1,13 @@
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -21,7 +17,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
@@ -29,7 +24,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -47,11 +41,13 @@ import javax.swing.SwingUtilities;
 public class Proyecto extends javax.swing.JFrame {
 	private JLabel lblID;
 	private JButton btnAdminEvento;
+	private JTextField txtJefe;
+	private JLabel jLabel1;
+	private JButton btnAdminGrupo;
+	private JList lstProyectos;
 	private JComboBox cbxEstado;
-	private JButton btnAdimnGrupo;
 	private JButton btnAdminTarea;
 	private JButton btnEliminar;
-	private JList lstProyectos;
 	private JLabel lblProyectos;
 	private JButton btnOk;
 	private JButton btnCancel;
@@ -75,16 +71,16 @@ public class Proyecto extends javax.swing.JFrame {
 	/**
 	* Auto-generated main method to display this JFrame
 	*/
-//	public static void main(String[] args) {/*
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				Proyecto inst = new Proyecto(null, null);
-//				inst.setLocationRelativeTo(null);
-//				inst.setVisible(true);
-//			}
-//		});*/
-//		Main.main(null);
-//	}
+	public static void main(String[] args) {/*
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				Proyecto inst = new Proyecto(null, null);
+				inst.setLocationRelativeTo(null);
+				inst.setVisible(true);
+			}
+		});*/
+		Main.main(null);
+	}
 	
 	
 	public Proyecto(Main parent, Conexion dbConnection) {
@@ -94,7 +90,6 @@ public class Proyecto extends javax.swing.JFrame {
 		conexionDB = dbConnection;
 		frmPrincipal = parent;
 		populateList();
-		lstProyectos.setSelectedIndex(0);
 	}
 	
 	public Main getMain(){
@@ -102,7 +97,7 @@ public class Proyecto extends javax.swing.JFrame {
 	}
 	private void initGUI() {
 		try {
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			this.setTitle("Project Manager: Proyecto");
 			getContentPane().setLayout(null);
 			this.setPreferredSize(new java.awt.Dimension(674, 304));
@@ -131,26 +126,26 @@ public class Proyecto extends javax.swing.JFrame {
 				lblNombre = new JLabel();
 				getContentPane().add(lblNombre);
 				lblNombre.setText("Nombre");
-				lblNombre.setBounds(18, 41, 46, 14);
+				lblNombre.setBounds(18, 74, 46, 14);
 				lblNombre.setFont(new java.awt.Font("Tahoma",0,10));
 			}
 			{
 				txtNombre = new JTextField();
 				getContentPane().add(txtNombre);
-				txtNombre.setBounds(98, 38, 132, 21);
+				txtNombre.setBounds(98, 71, 132, 21);
 				txtNombre.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
 			{
 				lblDescripcion = new JLabel();
 				getContentPane().add(lblDescripcion);
 				lblDescripcion.setText("Descripción");
-				lblDescripcion.setBounds(18, 67, 54, 14);
+				lblDescripcion.setBounds(18, 100, 54, 14);
 				lblDescripcion.setFont(new java.awt.Font("Tahoma",0,10));
 			}
 			{
 				edpDescripcion = new JEditorPane();
 				getContentPane().add(edpDescripcion);
-				edpDescripcion.setBounds(98, 65, 186, 85);
+				edpDescripcion.setBounds(98, 98, 186, 85);
 				edpDescripcion.setFont(new java.awt.Font("Tahoma",0,10));
 				edpDescripcion.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
@@ -158,21 +153,21 @@ public class Proyecto extends javax.swing.JFrame {
 				lblFechaDeInicio = new JLabel();
 				getContentPane().add(lblFechaDeInicio);
 				lblFechaDeInicio.setText("Fecha de Inicio");
-				lblFechaDeInicio.setBounds(18, 159, 72, 14);
+				lblFechaDeInicio.setBounds(18, 192, 72, 14);
 				lblFechaDeInicio.setFont(new java.awt.Font("Tahoma",0,10));
 			}
 			{
 				lblFechaFin = new JLabel();
 				getContentPane().add(lblFechaFin);
 				lblFechaFin.setText("Fecha de Fin");
-				lblFechaFin.setBounds(18, 185, 61, 14);
+				lblFechaFin.setBounds(18, 218, 61, 14);
 				lblFechaFin.setFont(new java.awt.Font("Tahoma",0,10));
 			}
 			{
 				lblEstado = new JLabel();
 				getContentPane().add(lblEstado);
 				lblEstado.setText("Estado");
-				lblEstado.setBounds(18, 211, 43, 14);
+				lblEstado.setBounds(18, 244, 43, 14);
 				lblEstado.setFont(new java.awt.Font("Tahoma",0,10));
 			}
 			{
@@ -181,7 +176,7 @@ public class Proyecto extends javax.swing.JFrame {
 				cbxInicioDia = new JComboBox();
 				getContentPane().add(cbxInicioDia);
 				cbxInicioDia.setModel(cbxInicioDiaModel);
-				cbxInicioDia.setBounds(96, 156, 49, 21);
+				cbxInicioDia.setBounds(96, 189, 49, 21);
 				cbxInicioDia.setFont(new java.awt.Font("Tahoma",0,10));
 			}
 			{
@@ -191,7 +186,7 @@ public class Proyecto extends javax.swing.JFrame {
 				cbxInicioMes = new JComboBox();
 				getContentPane().add(cbxInicioMes);
 				cbxInicioMes.setModel(cbxInicioMesModel);
-				cbxInicioMes.setBounds(157, 156, 61, 21);
+				cbxInicioMes.setBounds(157, 189, 61, 21);
 				cbxInicioMes.setFont(new java.awt.Font("Tahoma",0,10));
 				cbxInicioMes.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -207,7 +202,7 @@ public class Proyecto extends javax.swing.JFrame {
 				cbxInicioAño = new JComboBox();
 				getContentPane().add(cbxInicioAño);
 				cbxInicioAño.setModel(cbxInicioAñoModel);
-				cbxInicioAño.setBounds(230, 156, 54, 21);
+				cbxInicioAño.setBounds(230, 189, 54, 21);
 				cbxInicioAño.setFont(new java.awt.Font("Tahoma",0,10));
 				cbxInicioAño.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -221,7 +216,7 @@ public class Proyecto extends javax.swing.JFrame {
 				cbxFinDia = new JComboBox();
 				getContentPane().add(cbxFinDia);
 				cbxFinDia.setModel(jComboBox2Model);
-				cbxFinDia.setBounds(96, 182, 49, 21);
+				cbxFinDia.setBounds(96, 215, 49, 21);
 				cbxFinDia.setFont(new java.awt.Font("Tahoma",0,10));
 			}
 			{
@@ -231,7 +226,7 @@ public class Proyecto extends javax.swing.JFrame {
 				cbxFinMes = new JComboBox();
 				getContentPane().add(cbxFinMes);
 				cbxFinMes.setModel(jComboBox3Model);
-				cbxFinMes.setBounds(157, 180, 61, 21);
+				cbxFinMes.setBounds(157, 213, 61, 21);
 				cbxFinMes.setFont(new java.awt.Font("Tahoma",0,10));
 				cbxFinMes.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -251,7 +246,7 @@ public class Proyecto extends javax.swing.JFrame {
 				cbxFinAño = new JComboBox();
 				getContentPane().add(cbxFinAño);
 				cbxFinAño.setModel(jComboBox4Model);
-				cbxFinAño.setBounds(230, 182, 54, 21);
+				cbxFinAño.setBounds(230, 215, 54, 21);
 				cbxFinAño.setFont(new java.awt.Font("Tahoma",0,10));
 				cbxFinAño.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -275,7 +270,7 @@ public class Proyecto extends javax.swing.JFrame {
 				btnOk = new JButton();
 				getContentPane().add(btnOk);
 				btnOk.setText("Guardar Cambios");
-				btnOk.setBounds(404, 241, 146, 21);
+				btnOk.setBounds(426, 241, 124, 21);
 				btnOk.setFont(new java.awt.Font("Tahoma",0,10));
 				btnOk.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -291,27 +286,11 @@ public class Proyecto extends javax.swing.JFrame {
 				lblProyectos.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
-				ListModel lstProyectosModel = 
-					new DefaultComboBoxModel(
-							new String[] {});
-				lstProyectos = new JList();
-				getContentPane().add(lstProyectos);
-				lstProyectos.setModel(lstProyectosModel);
-				lstProyectos.setBounds(296, 40, 192, 189);
-				lstProyectos.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-				lstProyectos.setFont(new java.awt.Font("Arial",0,10));
-				lstProyectos.addListSelectionListener(new ListSelectionListener() {
-					public void valueChanged(ListSelectionEvent evt) {
-						lstProyectosValueChanged(evt);
-					}
-				});
-			}
-			{
 				btnEliminar = new JButton();
 				getContentPane().add(btnEliminar);
 				btnEliminar.setText("Eliminar Proyecto");
 				btnEliminar.setFont(new java.awt.Font("Tahoma",0,10));
-				btnEliminar.setBounds(261, 241, 131, 21);
+				btnEliminar.setBounds(296, 241, 115, 21);
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						btnEliminarActionPerformed(evt);
@@ -331,8 +310,25 @@ public class Proyecto extends javax.swing.JFrame {
 				});
 			}
 			{
+				ListModel lstProyectosModel = new DefaultComboBoxModel();
+				lstProyectos = new JList();
+				lstProyectos.setModel(lstProyectosModel);
+				lstProyectos.setBounds(295, 37, 192, 189);
+				getContentPane().add(lstProyectos);
+				lstProyectos.setFont(new java.awt.Font("Tahoma",0,10));
+				lstProyectos.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				lstProyectos.addListSelectionListener(new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent evt) {
+						lstProyectosValueChanged(evt);
+					}
+				});
+			}
+			{
 				btnAdminTarea = new JButton();
 				getContentPane().add(btnAdminTarea);
+				getContentPane().add(getBtnAdminGrupo());
+				getContentPane().add(getJLabel1());
+				getContentPane().add(getJTextField1());
 				btnAdminTarea.setText("Administrar Tarea");
 				btnAdminTarea.setFont(new java.awt.Font("Tahoma",0,10));
 				btnAdminTarea.setBounds(500, 64, 154, 21);
@@ -343,11 +339,7 @@ public class Proyecto extends javax.swing.JFrame {
 				});
 			}
 			{
-				btnAdimnGrupo = new JButton();
-				getContentPane().add(btnAdimnGrupo);
-				btnAdimnGrupo.setText("Administrar Grupo");
-				btnAdimnGrupo.setFont(new java.awt.Font("Tahoma",0,10));
-				btnAdimnGrupo.setBounds(500, 91, 154, 21);
+				
 			}
 			pack();
 			this.setSize(674, 304);
@@ -368,18 +360,21 @@ public class Proyecto extends javax.swing.JFrame {
 			int cantResults = rs.getRow();
 			rs.beforeFirst();
 			int i=0;
-			String[] stringArr = new String[cantResults+1];
+			DefaultComboBoxModel model = new DefaultComboBoxModel();
 			for(i=0;i<cantResults;i++){
 				rs.next();
-				stringArr[i] = rs.getString("id_proyecto") + "-"+ rs.getString("nombre");
+				model.addElement(rs.getString("id_proyecto") + "-"+ rs.getString("nombre"));
+				//System.out.println(stringArr[i]);
 			}
 			
-			stringArr[i] = "0-CREAR NUEVO PROYECTO"; 
+			model.addElement("0-CREAR NUEVO PROYECTO"); 
 			
-			lstProyectos.setModel(new DefaultComboBoxModel(stringArr));
-			lstProyectos.setSelectedIndex(0);
 			stmt.close();
 			conexionDB.desconectarBD();
+			
+			lstProyectos.setModel(model);
+			
+			lstProyectos.setSelectedIndex(0);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -402,46 +397,115 @@ public class Proyecto extends javax.swing.JFrame {
 		cbxDia.setSelectedIndex(Integer.parseInt(yyyyMMdd.substring(8))-1);
 	}
 	
+	public boolean esJefe(String userName, String projectID) {
+		String queryJefe = "select jefe from proyectos where id_proyecto = " + projectID;
+		boolean ret = false;
+		try {
+			conexionDB.conectarBD();
+			Statement stmtJefe = conexionDB.statement();			
+			ResultSet rsJefe = stmtJefe.executeQuery(queryJefe);
+			if(rsJefe.next()) ret = userName.equals(rsJefe.getString("jefe"));
+			stmtJefe.close();
+			conexionDB.desconectarBD();
+			
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return ret;
+	}
+	
+	private void setUserControls(boolean enable, boolean editable) {
+		txtJefe.setEditable(enable && editable);
+		txtNombre.setEditable(enable && editable);
+		edpDescripcion.setEditable(enable && editable);
+		cbxInicioDia.setEnabled(enable && editable);
+		cbxInicioMes.setEnabled(enable && editable);
+		cbxInicioAño.setEnabled(enable && editable);
+		cbxFinDia.setEnabled(enable && editable);
+		cbxFinMes.setEnabled(enable && editable);
+		cbxFinAño.setEnabled(enable && editable);
+		cbxEstado.setEnabled(enable && editable);
+		btnAdminEvento.setEnabled(enable && editable);
+		btnAdminTarea.setEnabled(enable && editable);
+		btnAdminGrupo.setEnabled(enable && editable);
+		btnEliminar.setEnabled(enable && editable);
+		btnOk.setEnabled(enable && editable);
+	}
+	
+	private boolean editable(String projectID){
+		try {
+			conexionDB.conectarBD();
+			Statement stmt = conexionDB.statement();
+			
+			ResultSet rs = stmt.executeQuery("select estado from proyectos where id_proyecto = " + projectID);
+			if(rs.next()){
+				String status = rs.getString("estado");
+				System.out.println(status);
+				return ((status.equals("Activo")) || (status.equals("Pendiente")));
+			}else return false;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	private void lstProyectosValueChanged(ListSelectionEvent evt) {
-		String projName = getCurrentProjectName();
-		String projID = getCurrentProjectID();
+		String projName;
+		String projID;
 		
-		if (projID.equals("0")){
-			//si seleccionó para crear un nuevo proyecto
-			txtID.setText("");
-			cbxEstado.setSelectedItem("Pendiente");
-			txtNombre.setText("Nuevo proyecto");
-			edpDescripcion.setText("");
-			cbxEstado.setEnabled(false);
-			Date date = Calendar.getInstance().getTime();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			String currentDate = sdf.format(date);
-			setDate(currentDate, cbxInicioDia, cbxInicioMes, cbxInicioAño);
-			setDate(currentDate, cbxFinDia, cbxFinMes, cbxFinAño);
-		} else {
-			cbxEstado.setEnabled(true);
-			try {
-				conexionDB.conectarBD();
-				Statement stmt = conexionDB.statement();
-				
-				String query = "select descripcion, fecha_inicio, fecha_fin, estado from proyectos where id_proyecto = " + projID;
-				ResultSet rs = stmt.executeQuery(query);
-				
-				if(rs.next()){
-					txtID.setText(projID);
-					txtNombre.setText(projName);
-					edpDescripcion.setText(rs.getString("descripcion"));
-					cbxEstado.setSelectedItem(rs.getString("estado"));
-					setDate(rs.getString("fecha_inicio"), cbxInicioDia, cbxInicioMes, cbxInicioAño);
-					setDate(rs.getString("fecha_fin"), cbxFinDia, cbxFinMes, cbxFinAño);
-				}else{
-					System.out.println("This should NOT happen...");
+		String currentUser = frmPrincipal.getCurrentUserID();
+		
+		boolean permitido;
+		boolean editable;
+		if (lstProyectos.getSelectedIndices().length>0) {
+			
+			projName = getCurrentProjectName();
+			projID = getCurrentProjectID();
+			permitido = esJefe(currentUser, projID);
+			editable = editable(projID);
+			setUserControls(permitido, editable);
+			System.out.println("Proyecto " + projName + ", " + permitido );
+			if (projID.equals("0")){
+				//si seleccionó para crear un nuevo proyecto
+				btnOk.setEnabled(true);
+				txtID.setText("");
+				cbxEstado.setSelectedItem("Pendiente");
+				txtNombre.setText("Nuevo proyecto");
+				edpDescripcion.setText("");
+				cbxEstado.setEnabled(false);
+				Date date = Calendar.getInstance().getTime();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				String currentDate = sdf.format(date);
+				setDate(currentDate, cbxInicioDia, cbxInicioMes, cbxInicioAño);
+				setDate(currentDate, cbxFinDia, cbxFinMes, cbxFinAño);
+			} else {
+				//seleccionó un proyecto ya existente
+				try {
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
+					
+					String query = "select jefe, descripcion, fecha_inicio, fecha_fin, estado from proyectos where id_proyecto = " + projID;
+					ResultSet rs = stmt.executeQuery(query);
+					
+					if(rs.next()){
+						txtID.setText(projID);
+						txtJefe.setText(rs.getString("jefe"));
+						txtNombre.setText(projName);
+						edpDescripcion.setText(rs.getString("descripcion"));
+						cbxEstado.setSelectedItem(rs.getString("estado"));
+						setDate(rs.getString("fecha_inicio"), cbxInicioDia, cbxInicioMes, cbxInicioAño);
+						setDate(rs.getString("fecha_fin"), cbxFinDia, cbxFinMes, cbxFinAño);
+					}else{
+						System.out.println("This should NOT happen...");
+					}
+					rs.close();
+					conexionDB.desconectarBD();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				rs.close();
-				conexionDB.desconectarBD();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}
@@ -472,6 +536,7 @@ public class Proyecto extends javax.swing.JFrame {
 					
 					stmt.executeUpdate(query);
 					cbxEstado.setSelectedItem("Cancelado");
+					populateList();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -491,6 +556,7 @@ public class Proyecto extends javax.swing.JFrame {
 						
 						stmt.executeUpdate(query);
 						cbxEstado.setSelectedItem("Cancelado");
+						populateList();
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -539,25 +605,29 @@ public class Proyecto extends javax.swing.JFrame {
 	private void btnOkActionPerformed(ActionEvent evt) {
 		if (validarFecha()){
 			if (getCurrentProjectID().equals("0")){
-				//estamos creando un proyecto nuevo
+				//Caso de uso CREAR PROYECTO
 				try {					
 					Date date = Calendar.getInstance().getTime();
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					String currentDate = sdf.format(date);
 					if (currentDate.compareTo(Utils.makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
-						String userID = frmPrincipal.getCurrentUserID();
-						conexionDB.conectarBD();
-						Statement stmt = conexionDB.statement();
-						String query = "insert into proyectos (jefe, nombre, descripcion, fecha_inicio, fecha_fin, estado) values ("+
-							userID + ",'" + 
-							txtNombre.getText() + "','" +
-							edpDescripcion.getText() + "','" +
-							Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
-							Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
-						System.out.println(query);
-						stmt.executeUpdate(query);
-						stmt.close();
-						conexionDB.desconectarBD();
+						int opt = JOptionPane.showConfirmDialog(this, "Está seguro de que desea crear un proyecto nuevo?", "Project Manager - Crear Proyecto", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (opt == JOptionPane.YES_OPTION){
+							String userID = frmPrincipal.getCurrentUserID();
+							conexionDB.conectarBD();
+							Statement stmt = conexionDB.statement();
+							String query = "insert into proyectos (jefe, nombre, descripcion, fecha_inicio, fecha_fin, estado) values ("+
+								userID + ",'" + 
+								txtNombre.getText() + "','" +
+								edpDescripcion.getText() + "','" +
+								Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
+								Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
+							System.out.println(query);
+							stmt.executeUpdate(query);
+							stmt.close();
+							conexionDB.desconectarBD();
+							populateList();
+						}
 					}else{
 						JOptionPane.showMessageDialog(this, "La fecha no puede ser anterior a la actual.", "Error: fecha inválida", JOptionPane.ERROR_MESSAGE);
 					}
@@ -568,21 +638,24 @@ public class Proyecto extends javax.swing.JFrame {
 				
 			}else{
 				//estamos modificando un proyecto existente
-				String userID = frmPrincipal.getCurrentUserID();
 				try {
-					conexionDB.conectarBD();
-					Statement stmt = conexionDB.statement();
-					String query = "update proyectos set "+ 
-						"nombre = '" + txtNombre.getText() + "', " +
-						"descripcion = '" + edpDescripcion.getText() + "', " +
-						"fecha_inicio = '" + Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "', " +
-						"fecha_fin = '" + Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "', " + 
-						"estado = '" + cbxEstado.getSelectedItem().toString() +
-						"' where id_proyecto = " + getCurrentProjectID();
-					System.out.println(query);
-					stmt.execute(query);
-					stmt.close();
-					conexionDB.desconectarBD();
+					int opt = JOptionPane.showConfirmDialog(this, "Está seguro de que desea modificar el proyecto?", "Project Manager - Crear Proyecto", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (opt == JOptionPane.YES_OPTION){
+						conexionDB.conectarBD();
+						Statement stmt = conexionDB.statement();
+						String query = "update proyectos set "+ 
+							"nombre = '" + txtNombre.getText() + "', " +
+							"descripcion = '" + edpDescripcion.getText() + "', " +
+							"fecha_inicio = '" + Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "', " +
+							"fecha_fin = '" + Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "', " + 
+							"estado = '" + cbxEstado.getSelectedItem().toString() +
+							"' where id_proyecto = " + getCurrentProjectID();
+						System.out.println(query);
+						stmt.execute(query);
+						stmt.close();
+						conexionDB.desconectarBD();
+						populateList();
+					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -600,7 +673,8 @@ public class Proyecto extends javax.swing.JFrame {
 						new String[] { "Pendiente", "Activo", "Finalizado", "Cancelado" });
 			cbxEstado = new JComboBox();
 			cbxEstado.setModel(cbxEstadoModel);
-			cbxEstado.setBounds(96, 208, 188, 21);
+			cbxEstado.setBounds(96, 241, 188, 21);
+			cbxEstado.setFont(new java.awt.Font("Arial",0,10));
 		}
 		return cbxEstado;
 	}
@@ -630,14 +704,62 @@ public class Proyecto extends javax.swing.JFrame {
 		//System.out.println("btnAdminEvento.actionPerformed, event="+evt);
 		String id = getCurrentProjectID();
 		if (!id.equals("0")){
-			this.setVisible(false);
-			
-			Tarea tarea = new Tarea(this,conexionDB,getCurrentProjectName(),id);
-			tarea.setVisible(true);
+			try {
+				conexionDB.conectarBD();
+				Statement stmt = conexionDB.statement();
+				
+				String query = "select id_grupo from grupos where proyecto = " + getCurrentProjectID();
+				ResultSet rs = stmt.executeQuery(query);
+				//con esto me fijo si tiene grupos asociados. Si no, ni abro la ventana
+				if(rs.next()){
+					this.setVisible(false);
+					rs.close();
+					conexionDB.desconectarBD();
+					Tarea tarea = new Tarea(this,conexionDB,getCurrentProjectName(),id);
+					tarea.setVisible(true);					
+				}else{
+					JOptionPane.showMessageDialog(this, "El proyecto que ha seleccionado no tiene aún ningún grupo asociado. Cree un grupo en el proyecto para asignarle tareas.", 
+							"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
+					rs.close();
+					conexionDB.desconectarBD();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else 
 			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún proyecto.", 
 												"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
+	}
+
+	private JButton getBtnAdminGrupo() {
+		if(btnAdminGrupo == null) {
+			btnAdminGrupo = new JButton();
+			btnAdminGrupo.setText("Administrar Grupos");
+			btnAdminGrupo.setBounds(500, 90, 155, 21);
+			btnAdminGrupo.setFont(new java.awt.Font("Tahoma",0,10));
+		}
+		return btnAdminGrupo;
+	}
+	
+	private JLabel getJLabel1() {
+		if(jLabel1 == null) {
+			jLabel1 = new JLabel();
+			jLabel1.setText("Jefe");
+			jLabel1.setFont(new java.awt.Font("Tahoma",0,10));
+			jLabel1.setBounds(18, 46, 34, 14);
+		}
+		return jLabel1;
+	}
+	
+	private JTextField getJTextField1() {
+		if(txtJefe == null) {
+			txtJefe = new JTextField();
+			txtJefe.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+			txtJefe.setBounds(98, 41, 132, 21);
+		}
+		return txtJefe;
 	}
 
 }

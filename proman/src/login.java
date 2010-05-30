@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -9,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.BorderFactory;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -18,6 +21,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import javax.swing.WindowConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.SwingUtilities;
 
 
@@ -74,11 +78,6 @@ public class login extends javax.swing.JFrame {
 			this.setPreferredSize(new java.awt.Dimension(272, 125));
 			this.setAlwaysOnTop(true);
 			this.setResizable(false);
-			this.addWindowListener(new WindowAdapter() {
-				public void windowIconified(WindowEvent evt) {
-					thisWindowIconified(evt);
-				}
-			});
 			{
 				btnAceptar = new JButton();
 				getContentPane().add(btnAceptar);
@@ -105,6 +104,12 @@ public class login extends javax.swing.JFrame {
 				txtUsuario = new JTextField();
 				getContentPane().add(txtUsuario);
 				txtUsuario.setBounds(79, 9, 163, 21);
+				txtUsuario.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				txtUsuario.addKeyListener(new KeyAdapter() {
+					public void keyPressed(KeyEvent evt) {
+						txtKeyPressed(evt);
+					}
+				});
 			}
 			{
 				lblUsuario = new JLabel();
@@ -124,6 +129,12 @@ public class login extends javax.swing.JFrame {
 				txtContraseña = new JPasswordField();
 				getContentPane().add(txtContraseña);
 				txtContraseña.setBounds(80, 35, 162, 21);
+				txtContraseña.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				txtContraseña.addKeyListener(new KeyAdapter() {
+					public void keyPressed(KeyEvent evt) {
+						txtKeyPressed(evt);
+					}
+				});
 			}
 			pack();
 			this.setSize(272, 125);
@@ -178,10 +189,10 @@ public class login extends javax.swing.JFrame {
 		this.dispose();
 	}
 	
-	//PREGUNTA: ¿Qué es esto?
-	private void thisWindowIconified(WindowEvent evt) {
-		System.out.println("this.windowIconified, event="+evt);
-		//TODO add your code for this.windowIconified
+	private void txtKeyPressed(KeyEvent evt) {
+		if (evt.getKeyCode()==10) {
+			btnAceptarActionPerformed(null);
+		}
 	}
 
 }

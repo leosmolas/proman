@@ -224,6 +224,7 @@ public class Tarea extends javax.swing.JFrame {
 				txtID.setFont(new java.awt.Font("Arial",0,10));
 				txtID.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				txtID.setEditable(false);
+
 			}
 			{
 				lblID = new JLabel();
@@ -381,10 +382,19 @@ public class Tarea extends javax.swing.JFrame {
 		boolean enable = !getID(cbxGrupos.getSelectedItem().toString()).equals("0");
 
 		populateList();
-//		btnEliminar.setEnabled(enable);
-//		btnOk.setEnabled(enable);
+		setButtons();
 	}
 	
+	private void setButtons() {
+		boolean allGrupos = getID(cbxGrupos.getSelectedItem().toString()).equals("0");
+		boolean newTarea = false;
+		if (lstTarea.getSelectedIndices().length>0) {
+			 newTarea = !getID(lstTarea.getSelectedValue().toString()).equals("0");
+		}		
+		btnOk.setEnabled(newTarea && !allGrupos);
+		btnEliminar.setEnabled((newTarea && !allGrupos)||(allGrupos && lstTarea.getSelectedIndices().length>0));		
+	}
+
 	private void thisWindowClosed(WindowEvent evt) {
 		frmParent.setVisible(true);
 	}
@@ -403,10 +413,8 @@ public class Tarea extends javax.swing.JFrame {
 	
 			if (evID.equals("0")){
 				//si seleccionó para crear un nuevo evento
-				cleanForm();
-				btnEliminar.setEnabled(false);
+				cleanForm();				
 			} else {
-				btnEliminar.setEnabled(true);
 				try {
 					conexionDB.conectarBD();
 					Statement stmt = conexionDB.statement();
@@ -430,6 +438,7 @@ public class Tarea extends javax.swing.JFrame {
 				}
 			}
 		}
+		setButtons();
 	}
 
 	private void cleanForm() {

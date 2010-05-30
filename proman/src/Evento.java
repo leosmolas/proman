@@ -228,6 +228,7 @@ public class Evento extends javax.swing.JFrame {
 				txtNombre = new JTextField();
 				getContentPane().add(txtNombre);
 				txtNombre.setBounds(98, 38, 132, 21);
+				txtNombre.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
 			{
 				lblNombre = new JLabel();
@@ -341,7 +342,9 @@ public class Evento extends javax.swing.JFrame {
 			if (evID.equals("0")){
 				//si seleccionó para crear un nuevo evento
 				cleanForm();
-			} else {			
+				btnEliminar.setEnabled(false);
+			} else {
+				btnEliminar.setEnabled(true);
 				try {
 					conexionDB.conectarBD();
 					Statement stmt = conexionDB.statement();
