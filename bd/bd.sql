@@ -56,6 +56,7 @@ create table eventos (
 create table grupos (
 
 	id_grupo int unsigned not null auto_increment,
+	nombre varchar(45) not null,
 	descripcion text,
     proyecto int unsigned,
 	

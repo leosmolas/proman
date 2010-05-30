@@ -144,7 +144,7 @@ public class Main extends javax.swing.JFrame {
 	}
 	
 	private void btnAdminGruposActionPerformed(ActionEvent evt) {
-		Grupo frmGrupo= new Grupo();
+		Grupo frmGrupo= new Grupo(this, conexionBD);
 		this.setVisible(false);
 		frmGrupo.setVisible(true);
 	}

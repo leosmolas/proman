@@ -33,9 +33,9 @@ insert into eventos (proyecto, fecha, hora_inicio, nombre, descripcion) values (
 /* Grupo 1 -> Usuarios Primos */
 /* Grupo 2 -> Multiplos de 2 */
 /* Grupo 3 -> Multiplos de 3 */
-insert into grupos (descripcion, proyecto) values ("Grupo Proyecto 1",1);
-insert into grupos (descripcion, proyecto) values ("Grupo Proyecto 2",2);
-insert into grupos (descripcion, proyecto) values ("Grupo Proyecto 3",3);
+insert into grupos (nombre, descripcion, proyecto) values ("Grupo Proyecto 1","Descripcion Grupo Proyecto 1",1);
+insert into grupos (nombre, descripcion, proyecto) values ("Grupo Proyecto 2","Descripcion Grupo Proyecto 2",2);
+insert into grupos (nombre, descripcion, proyecto) values ("Grupo Proyecto 3","Descripcion Grupo Proyecto 3",3);
 
 /* TAREAS */
 /* 2 Tareas */

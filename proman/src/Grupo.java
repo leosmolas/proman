@@ -6,6 +6,9 @@ import java.awt.event.WindowStateListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -61,70 +64,103 @@ public class Grupo extends javax.swing.JFrame {
 	/**
 	* Auto-generated main method to display this JFrame
 	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				Grupo inst = new Grupo();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});
-	}
-	
-	public Grupo() {
-		super();
-		initGUI();
-	}
+//	public static void main(String[] args) {
+//		SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//				Grupo inst = new Grupo();
+//				inst.setLocationRelativeTo(null);
+//				inst.setVisible(true);
+//			}
+//		});
+//	}
 	
 	public Grupo(Main parent, Conexion dbConnection) {
 		super();
 		initGUI();
 		
-		conexionDB = dbConnection;
+		Statement stmt;
+		String    query, currentUID;
+		ResultSet rs;
+		String[]  stringArr;
+		int cantResults, i; 
+		
+		conexionDB   = dbConnection;
 		frmPrincipal = parent;
 		/*
 		 * si fue llamado desde la pantalla main,
 		 * tiene que mostrar los grupos asociados a los proyectos de los cuales el usuario es jefe
-		 * si fue llamado desde la pantalla de proyecto
-		 * tiene que mostrar los grupos asociados al proyecto seleccionado en la pantalla de 
-		 * */
-		//populateList();
-		//lstProyectos.setSelectedIndex(0);
-	}
-	
-	private void populateList() {
-		Statement stmt;
-		String    query; 
-		String[] stringArr;
-		ResultSet rs;
-		int cantResults, i;
+		 */
 		try {
+			currentUID = parent.getCurrentUserID();
+			System.out.println("im in");
 			conexionDB.conectarBD();			
+			System.out.println("im still in");
 			stmt  = conexionDB.statement();			
-			query = "select id_proyecto, nombre from proyectos";
+			query = "select id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where id_proyecto = proyecto and jefe = " + currentUID;
 			rs    = stmt.executeQuery(query);
 			rs.last();
 			cantResults = rs.getRow();
 			rs.beforeFirst();
 			i = 0;
 			stringArr = new String[cantResults + 1];
-			
 			for(i = 0; i < cantResults; i++) {
 				rs.next();
-				stringArr[i] = rs.getString("id_proyecto") + "-" + rs.getString("nombre");
+				stringArr[i] = rs.getString("id_grupo") + "-" + rs.getString("nombre");
+				System.out.println("Cargando "+stringArr[i]);
 			}
-			
-			stringArr[i] = "0-CREAR NUEVO PROYECTO"; 
-			
-			//lstProyectos.setModel(new DefaultComboBoxModel(stringArr));
-			//lstProyectos.setSelectedIndex(0);
+			stringArr[i] = "0-CREAR NUEVO GRUPO"; 
+			lstGrupos.setModel(new DefaultComboBoxModel(stringArr));
+			lstGrupos.setSelectedIndex(0);
 			stmt.close();
 			conexionDB.desconectarBD();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lstGrupos.setSelectedIndex(0);
 	}
+	
+	public Grupo(Main parent, Conexion dbConnection, String proyectID) {
+		super();
+		initGUI();
 
+		Statement stmt;
+		String    query;
+		ResultSet rs;
+		String[]  stringArr;
+		int cantResults, i; 
+		
+		conexionDB   = dbConnection;
+		frmPrincipal = parent;
+		
+		/*
+		 * si fue llamado desde la pantalla de proyecto
+		 * tiene que mostrar los grupos asociados al proyecto seleccionado en la pantalla de proyecto
+		 * */
+		try {
+			conexionDB.conectarBD();			
+			stmt  = conexionDB.statement();			
+			query = "select id_grupo, descripcion from grupos where proyecto = " + proyectID;
+			rs    = stmt.executeQuery(query);
+			rs.last();
+			cantResults = rs.getRow();
+			rs.beforeFirst();
+			i = 0;
+			stringArr = new String[cantResults + 1];
+			for(i = 0; i < cantResults; i++) {
+				rs.next();
+				stringArr[i] = rs.getString("id_grupo") + "-" + rs.getString("nombre");
+			}
+			stringArr[i] = "0-CREAR NUEVO GRUPO"; 
+			lstGrupos.setModel(new DefaultComboBoxModel(stringArr));
+			lstGrupos.setSelectedIndex(0);
+			stmt.close();
+			conexionDB.desconectarBD();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		lstGrupos.setSelectedIndex(0);
+	}
+	
 	private void initGUI() {
 		try {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -132,8 +168,8 @@ public class Grupo extends javax.swing.JFrame {
 			getContentPane().setLayout(null);
 			this.setPreferredSize(new java.awt.Dimension(560, 371));
 			this.addWindowListener(new WindowAdapter() {
-				public void windowClosed(WindowEvent evt) {
-					thisWindowClosed(evt);
+				public void windowClosing(WindowEvent evt) {
+					thisWindowClosing(evt);
 				}
 			});
 			{
@@ -317,12 +353,20 @@ public class Grupo extends javax.swing.JFrame {
 		this.dispose();
 		}
 	
-	private void thisWindowClosed(WindowEvent evt) {
-		frmPrincipal.setVisible(true);
-		this.dispose();
+	private void lstGruposValueChanged(ListSelectionEvent evt) {
+		
+		String nombreGrupo, idGrupo;
+		
+		// get group id
+		nombreGrupo = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
+		idGrupo =  nombreGrupo.substring(0,nombreGrupo.indexOf('-'));
+		
+		
 	}
 	
-	private void lstGruposValueChanged(ListSelectionEvent evt) {
-	}
+	private void thisWindowClosing(WindowEvent evt) {
+		frmPrincipal.setVisible(true);
+		this.dispose();
+		}
 
 }
