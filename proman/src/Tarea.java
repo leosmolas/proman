@@ -1,3 +1,7 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,6 +15,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
@@ -49,7 +54,7 @@ public class Tarea extends javax.swing.JFrame {
 	private JLabel lblFechaFin;
 	private JComboBox cbxFinDia;
 	private JComboBox cbxFinMes;
-	private JComboBox cbxTareas;
+	private JComboBox cbxGrupos;
 	
 	private JFrame frmParent;
 	private Conexion conexionDB;
@@ -64,6 +69,7 @@ public class Tarea extends javax.swing.JFrame {
 		conexionDB = dbConnection;
 		frmParent = parent;
 		idProyecto = id;
+		populateGroups();
 		populateList();
 		try {
 			conexionDB.conectarBD();			
@@ -83,12 +89,12 @@ public class Tarea extends javax.swing.JFrame {
 		this.setTitle("Project Manager: Tareas del Proyecto " + proy);
 	}
 	
-	private void populateList() {
+	private void populateGroups() {
 		int cantResults,i;
 		try {
 			conexionDB.conectarBD();			
 			Statement stmt = conexionDB.statement();			
-			String query = "select id_evento, nombre from eventos where proyecto = "+idProyecto;
+			String query = "select id_grupo, descripcion from grupos where proyecto = "+idProyecto;
 			
 			ResultSet rs = stmt.executeQuery(query);
 			
@@ -99,43 +105,83 @@ public class Tarea extends javax.swing.JFrame {
 			String[] stringArr = new String[cantResults+1];
 			for(i=0;i<cantResults;i++){
 				rs.next();
-				stringArr[i] = rs.getString("id_evento") + "-"+ rs.getString("nombre");
+				stringArr[i] = rs.getString("id_grupo") + "-"+ rs.getString("descripcion");
 			}
-			
-			stringArr[i] = "0-CREAR NUEVO EVENTO"; 
-			
-			lstEventos.setModel(new DefaultComboBoxModel(stringArr));
-			lstEventos.setSelectedIndex(0);
+			stringArr[i] = "0-TODOS LOS GRUPOS";
+			cbxGrupos.setModel(new DefaultComboBoxModel(stringArr));
+
+			cbxGrupos.setSelectedIndex(0);
 			stmt.close();
 			conexionDB.desconectarBD();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void populateList() {
+		int cantResults,i;
+		try {
+			conexionDB.conectarBD();			
+			Statement stmt = conexionDB.statement();
+			String idGrupo = getID(cbxGrupos.getSelectedItem()+"");
+			String query = "select id_tarea, descripcion from tareas where proyecto = " + idProyecto;			
+			if (!idGrupo.equals("0")) 
+				query += " and grupo = " + idGrupo;
+			ResultSet rs = stmt.executeQuery(query);			
+			rs.last();
+			cantResults = rs.getRow();
+			rs.beforeFirst();
+			i=0;
+			String[] stringArr = new String[cantResults+1];
+			for(i=0;i<cantResults;i++){
+				rs.next();
+				stringArr[i] = rs.getString("id_tarea") + "-"+ rs.getString("descripcion");
+			}			
+			stringArr[i] = "0-CREAR NUEVA TAREA";
+			lstTarea.setModel(new DefaultComboBoxModel(stringArr));
+			lstTarea.setSelectedIndex(0);
+			stmt.close();
+			conexionDB.desconectarBD();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String getID(String selectedItem) {
+		return selectedItem.substring(0,selectedItem.indexOf('-'));
 	}
 
 	private void initGUI() {
 		try {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			getContentPane().setLayout(null);
+			this.addWindowListener(new WindowAdapter() {
+				public void windowClosed(WindowEvent evt) {
+					thisWindowClosed(evt);
+				}
+			});
 			{
 				btnEliminar = new JButton();
 				getContentPane().add(btnEliminar);
 				btnEliminar.setText("Eliminar Tarea");
 				btnEliminar.setFont(new java.awt.Font("Arial",0,10));
-				btnEliminar.setPreferredSize(new java.awt.Dimension(122,21));
-				btnEliminar.setBounds(118, 194, 122, 21);
+				btnEliminar.setBounds(216, 194, 122, 21);
 			}
 			{
-				ComboBoxModel cbxTareasModel = 
+				ComboBoxModel cbxGruposModel = 
 					new DefaultComboBoxModel(
 							new String[] { "Item One", "Item Two" });
-				cbxTareas = new JComboBox();
-				getContentPane().add(cbxTareas);
-				cbxTareas.setModel(cbxTareasModel);
-				cbxTareas.setFont(new java.awt.Font("Arial",0,10));
-				cbxTareas.setPreferredSize(new java.awt.Dimension(144,21));
-				cbxTareas.setBounds(312, 41, 144, 21);
+				cbxGrupos = new JComboBox();
+				getContentPane().add(cbxGrupos);
+				cbxGrupos.setModel(cbxGruposModel);
+				cbxGrupos.setFont(new java.awt.Font("Arial",0,10));
+				cbxGrupos.setBounds(312, 41, 242, 21);
+				cbxGrupos.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						cbxGruposActionPerformed(evt);
+					}
+				});
 			}
 			{
 				lblTareas = new JLabel();
@@ -153,15 +199,17 @@ public class Tarea extends javax.swing.JFrame {
 				getContentPane().add(lstTarea);
 				lstTarea.setModel(lstTareaModel);
 				lstTarea.setFont(new java.awt.Font("Arial",0,10));
-				lstTarea.setPreferredSize(new java.awt.Dimension(144,105));
 				lstTarea.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-				lstTarea.setBounds(312, 68, 144, 105);
+				lstTarea.setBounds(312, 68, 242, 105);
 			}
 			{
 				txtID = new JTextField();
 				getContentPane().add(txtID);
 				txtID.setPreferredSize(new java.awt.Dimension(132,21));
 				txtID.setBounds(114, 12, 132, 21);
+				txtID.setFont(new java.awt.Font("Arial",0,10));
+				txtID.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				txtID.setEditable(false);
 			}
 			{
 				lblID = new JLabel();
@@ -273,22 +321,42 @@ public class Tarea extends javax.swing.JFrame {
 				getContentPane().add(btnOk);
 				btnOk.setText("Guardar Tarea");
 				btnOk.setFont(new java.awt.Font("Arial",0,10));
-				btnOk.setPreferredSize(new java.awt.Dimension(121,21));
-				btnOk.setBounds(252, 194, 121, 21);
+				btnOk.setBounds(350, 194, 121, 21);
 			}
 			{
 				btnCancel = new JButton();
 				getContentPane().add(btnCancel);
 				btnCancel.setText("Cancelar");
 				btnCancel.setFont(new java.awt.Font("Arial",0,10));
-				btnCancel.setPreferredSize(new java.awt.Dimension(77,21));
-				btnCancel.setBounds(379, 194, 77, 21);
+				btnCancel.setBounds(477, 194, 77, 21);
+				btnCancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnCancelActionPerformed(evt);
+					}
+				});
 			}
 			pack();
-			this.setSize(482, 266);
+			this.setSize(574, 266);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void cbxGruposActionPerformed(ActionEvent evt) {
+		boolean enable = !getID(cbxGrupos.getSelectedItem().toString()).equals("0");
+
+		populateList();
+		btnEliminar.setEnabled(enable);
+		btnOk.setEnabled(enable);
+	}
+	
+	private void thisWindowClosed(WindowEvent evt) {
+		frmParent.setVisible(true);
+	}
+	
+	private void btnCancelActionPerformed(ActionEvent evt) {
+		frmParent.setVisible(true);
+		this.dispose();
 	}
 
 }

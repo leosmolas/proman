@@ -636,10 +636,10 @@ public class Proyecto extends javax.swing.JFrame {
 		if (!id.equals("0")){
 			this.setVisible(false);
 			
-			Evento evento = new Tarea(this,conexionDB,getCurrentProjectName(),id);
-			evento.setVisible(true);
+			Tarea tarea = new Tarea(this,conexionDB,getCurrentProjectName(),id);
+			tarea.setVisible(true);
 		}
-		else {
+		else 
 			JOptionPane.showMessageDialog(this, "No ha seleccionado ningún proyecto.", 
 												"¡Cuidado!", JOptionPane.WARNING_MESSAGE);
 	}
