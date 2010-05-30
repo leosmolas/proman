@@ -44,19 +44,6 @@ public class Grupo extends javax.swing.JFrame {
 	private JButton btnEliminar;
 	private JTextField txtID;
 	private JLabel lblDescripcion;
-
-	/**
-	* Auto-generated main method to display this JFrame
-	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				Grupo inst = new Grupo();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});
-	}
 	
 	public Grupo() {
 		super();
