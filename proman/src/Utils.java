@@ -1,3 +1,7 @@
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.swing.*;
 
 public class Utils {
@@ -8,6 +12,13 @@ public class Utils {
 			anios[i] = ""+ aux;
 		}
 		return anios;
+	}
+	
+	public static String getCurrentDate(){
+		Date date = Calendar.getInstance().getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String currentDate = sdf.format(date);
+		return currentDate;
 	}
 	
 	public static boolean esBisiesto(int year) {

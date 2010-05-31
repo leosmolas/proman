@@ -412,7 +412,7 @@ public class Tarea extends javax.swing.JFrame {
 			evID   = getID(lstTarea.getSelectedValue().toString());
 	
 			if (evID.equals("0")){
-				//si seleccionó para crear un nuevo evento
+				//si seleccionó para crear una nueva tarea
 				cleanForm();				
 			} else {
 				try {
@@ -442,14 +442,10 @@ public class Tarea extends javax.swing.JFrame {
 	}
 
 	private void cleanForm() {
+		Utils.setDate(Utils.getCurrentDate(), cbxInicioDia, cbxInicioMes, cbxInicioAño);
+		Utils.setDate(Utils.getCurrentDate(), cbxFinDia, cbxFinMes, cbxFinAño);
 		edpDescripcion.setText("");
 		txtID.setText("");
-		cbxFinAño.setSelectedIndex(0);
-		cbxFinMes.setSelectedIndex(0);
-		cbxFinDia.setSelectedIndex(0);
-		cbxInicioAño.setSelectedIndex(0);
-		cbxInicioDia.setSelectedIndex(0);
-		cbxInicioMes.setSelectedIndex(0);
 	}
 
 	private void cbxInicioActionPerformed(ActionEvent evt) {
