@@ -414,7 +414,6 @@ public class Proyecto extends javax.swing.JFrame {
 	}
 	
 	private void setUserControls(boolean enable, boolean editable) {
-		txtJefe.setEditable(enable && editable);
 		txtNombre.setEditable(enable && editable);
 		edpDescripcion.setEditable(enable && editable);
 		cbxInicioDia.setEnabled(enable && editable);
@@ -473,6 +472,7 @@ public class Proyecto extends javax.swing.JFrame {
 				btnEliminar.setEnabled(false);
 				//si seleccionó para crear un nuevo proyecto
 				txtID.setText("");
+				txtJefe.setText("");
 				cbxEstado.setSelectedItem("Pendiente");
 				txtNombre.setText("Nuevo proyecto");
 				edpDescripcion.setText("");
@@ -772,6 +772,7 @@ public class Proyecto extends javax.swing.JFrame {
 			txtJefe = new JTextField();
 			txtJefe.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			txtJefe.setBounds(98, 41, 132, 21);
+			txtJefe.setEditable(false);
 		}
 		return txtJefe;
 	}
