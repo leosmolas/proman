@@ -65,6 +65,7 @@ public class Grupo extends javax.swing.JFrame {
 	private Conexion conexionDB;
 	private Main frmPrincipal;
 	private int currentProjectID;
+	private Proyecto frmProyecto;
 	
 	/**
 	* Auto-generated main method to display this JFrame
@@ -126,7 +127,7 @@ public class Grupo extends javax.swing.JFrame {
 		lstGrupos.setSelectedIndex(0);
 	}
 	
-	public Grupo(Main parent, Conexion dbConnection, String proyectID) {
+	public Grupo(Main mainFrame, Proyecto parent, Conexion dbConnection, String proyectID) {
 		super();
 		initGUI();
 
@@ -138,14 +139,16 @@ public class Grupo extends javax.swing.JFrame {
 		
 		currentProjectID = Integer.parseInt(proyectID);
 		conexionDB   = dbConnection;
-		frmPrincipal = parent;
+		frmPrincipal = mainFrame;
+		
+		frmProyecto = parent;
 		
 		/*
 		 * si fue llamado desde la pantalla de proyecto
 		 * tiene que mostrar los grupos asociados al proyecto seleccionado en la pantalla de proyecto
 		 * */
 		try {
-			String currentUID = parent.getCurrentUserID();
+			String currentUID = mainFrame.getCurrentUserID();
 			conexionDB.conectarBD();			
 			stmt  = conexionDB.statement();			
 			query = "select distinct id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where ((id_proyecto = proyecto) and (jefe = " + currentUID + ")) and proyecto = " + proyectID;
@@ -368,7 +371,7 @@ public class Grupo extends javax.swing.JFrame {
 			if(currentProjectID == (-1)){
 				query = "insert into grupos (nombre, descripcion) values ('" + txtNombre.getText() + "', '" + edpDescripcion.getText() + "')";
 			} else {
-				query = "insert into grupos (nombre, descripcion) values ('" + txtNombre.getText() + "', '" + edpDescripcion.getText() + "', " + currentProjectID + ")";
+				query = "insert into grupos (nombre, descripcion, proyecto) values ('" + txtNombre.getText() + "', '" + edpDescripcion.getText() + "', " + currentProjectID + ")";
 			}
 			
 			System.out.println(query);
@@ -470,7 +473,9 @@ public class Grupo extends javax.swing.JFrame {
 	}
 	
 	private void thisWindowClosing(WindowEvent evt) {
-		frmPrincipal.setVisible(true);
+		if (currentProjectID == (-1)){
+			frmPrincipal.setVisible(true);
+		} else frmProyecto.setVisible(true);
 		this.dispose();
 	}
 

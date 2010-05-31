@@ -511,6 +511,12 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		}
 	}
 	
+	private String getSelectedProjectLine(){
+		if(lstProyectos.getSelectedIndex() != (-1))
+			return lstProyectos.getModel().getElementAt(lstProyectos.getSelectedIndex()).toString();
+		else return "";
+	}
+	
 	public String getCurrentProjectName(){
 		String selectedProj = lstProyectos.getModel().getElementAt(lstProyectos.getSelectedIndex()).toString();
 		String projName = selectedProj.substring(selectedProj.indexOf('-')+1);
@@ -518,7 +524,7 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
 	public String getCurrentProjectID(){
-		String selectedProj = lstProyectos.getModel().getElementAt(lstProyectos.getSelectedIndex()).toString();
+		String selectedProj = getSelectedProjectLine();
 		String projID = selectedProj.substring(0, selectedProj.indexOf('-'));
 		return projID;
 	}
@@ -735,7 +741,10 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
 	private void btnAdminGrupoActionPerformed(ActionEvent evt) {
-
+		String projID = getCurrentProjectID();
+		Grupo frmGrupo = new Grupo(frmPrincipal, this, conexionDB, projID);
+		this.setVisible(false);
+		frmGrupo.setVisible(true);
 	}
 
 }
