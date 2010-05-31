@@ -470,7 +470,6 @@ public class Tarea extends javax.swing.JFrame {
 					conexionDB.conectarBD();
 					Statement stmt = conexionDB.statement();
 					String query = "DELETE FROM tareas WHERE id_tarea = " + tareaID;
-					System.out.println("delete: " + query);
 					stmt.executeUpdate(query);
 					stmt.close();
 					conexionDB.desconectarBD();
@@ -495,7 +494,6 @@ public class Tarea extends javax.swing.JFrame {
 				if (inicioProy.compareTo(fechaInicio) <= 0){
 					if (fechaInicio.compareTo(fechaFin) <= 0) {
 						if (fechaFin.compareTo(finProy) <= 0) {
-							//System.out.println("Fechita re ok");
 							ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea crear la tarea?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 							if (ok == JOptionPane.OK_OPTION) {
 								conexionDB.conectarBD();
@@ -506,7 +504,6 @@ public class Tarea extends javax.swing.JFrame {
 									"'" + Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "'," + 
 									getID(cbxGrupos.getSelectedItem().toString()) + "," + 
 									idProyecto + ")";
-								System.out.println("query: " + query);
 								stmt.executeUpdate(query);
 								stmt.close();
 								conexionDB.desconectarBD();
@@ -533,7 +530,6 @@ public class Tarea extends javax.swing.JFrame {
 				if (inicioProy.compareTo(fechaInicio) <= 0){
 					if (fechaInicio.compareTo(fechaFin) <= 0) {
 						if (fechaFin.compareTo(finProy) <= 0) {
-							//System.out.println("Fechita re ok");
 							ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar tarea?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 							if (ok == JOptionPane.OK_OPTION) {
 								conexionDB.conectarBD();
@@ -543,7 +539,6 @@ public class Tarea extends javax.swing.JFrame {
 									"fecha_inicio = '" + Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "', " +
 									"fecha_fin = '" + Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "'" +
 									" where id_tarea = " + tareaID;
-								System.out.println("query: " + query);
 								stmt.executeUpdate(query);
 								stmt.close();
 								conexionDB.desconectarBD();

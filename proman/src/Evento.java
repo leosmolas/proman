@@ -332,7 +332,6 @@ public class Evento extends javax.swing.JFrame {
 	}
 	
 	private void lstEventosValueChanged(ListSelectionEvent evt) {
-//		System.out.println("lstEventos.valueChanged, event="+evt);
 		String evName , evID;
 		
 		if (lstEventos.getSelectedIndices().length>0) {
@@ -409,7 +408,6 @@ public class Evento extends javax.swing.JFrame {
 	}
 	
 	private void btnCancelActionPerformed(ActionEvent evt) {
-		System.out.println("btnCancel.actionPerformed, event="+evt);
 		frmParent.setVisible(true);
 		this.dispose();
 	}
@@ -419,13 +417,11 @@ public class Evento extends javax.swing.JFrame {
 		String evID = getCurrentEventtID();
 		int ok;
 		
-		System.out.println("btnOk.actionPerformed, event="+evt);
 		if (evID.equals("0")){
 			//estamos creando un proyecto nuevo
 			try {					
 				if (inicioProy.compareTo(fecha) <= 0){
 					if (fecha.compareTo(finProy) <= 0) {
-						//System.out.println("Fechita re ok");
 						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea crear el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 						if (ok == JOptionPane.OK_OPTION) {
 							conexionDB.conectarBD();
@@ -436,7 +432,6 @@ public class Evento extends javax.swing.JFrame {
 								edpDescripcion.getText() + "','" +
 								cbxHora.getSelectedItem() + ":" + cbxMin.getSelectedItem() + ":00','" +
 								txtNombre.getText() + "')";
-							System.out.println("query: " + query);
 							stmt.executeUpdate(query);
 							stmt.close();
 							conexionDB.desconectarBD();
@@ -457,7 +452,6 @@ public class Evento extends javax.swing.JFrame {
 			try {
 				if (inicioProy.compareTo(fecha) <= 0){
 					if (fecha.compareTo(finProy) <= 0) {
-						//System.out.println("Fechita re ok");
 						ok = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea modificar el evento?", "Project Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 						if (ok == JOptionPane.OK_OPTION) {
 							conexionDB.conectarBD();
@@ -468,7 +462,6 @@ public class Evento extends javax.swing.JFrame {
 								"nombre = '" + txtNombre.getText() + "', " +
 								"descripcion = '" + edpDescripcion.getText() + 
 								"' where id_evento = " + evID;
-							System.out.println("query: " + query);
 							stmt.executeUpdate(query);
 							stmt.close();
 							conexionDB.desconectarBD();
@@ -502,7 +495,6 @@ public class Evento extends javax.swing.JFrame {
 					conexionDB.conectarBD();
 					Statement stmt = conexionDB.statement();
 					String query = "DELETE FROM eventos WHERE id_evento = " + evID;
-					System.out.println("delete: " + query);
 					stmt.executeUpdate(query);
 					stmt.close();
 					conexionDB.desconectarBD();

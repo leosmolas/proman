@@ -361,7 +361,6 @@ public class Proyecto extends javax.swing.JFrame {
 			for(i=0;i<cantResults;i++){
 				rs.next();
 				model.addElement(rs.getString("id_proyecto") + "-"+ rs.getString("nombre"));
-				//System.out.println(stringArr[i]);
 			}
 			
 			model.addElement("0-CREAR NUEVO PROYECTO"); 
@@ -435,7 +434,6 @@ public class Proyecto extends javax.swing.JFrame {
 			ResultSet rs = stmt.executeQuery("select estado from proyectos where id_proyecto = " + projectID);
 			if(rs.next()){
 				String status = rs.getString("estado");
-				System.out.println(status);
 				return ((status.equals("Activo")) || (status.equals("Pendiente")));
 			}else return false;
 		} catch (SQLException e) {
@@ -460,7 +458,6 @@ public class Proyecto extends javax.swing.JFrame {
 			permitido = esJefe(currentUser, projID);
 			editable = editable(projID);
 
-			System.out.println("Proyecto " + projName + ", " + permitido );
 			if (projID.equals("0")){
 				setUserControls(true, true);
 				btnAdminEvento.setEnabled(false);
@@ -495,7 +492,6 @@ public class Proyecto extends javax.swing.JFrame {
 						setDate(rs.getString("fecha_inicio"), cbxInicioDia, cbxInicioMes, cbxInicioAño);
 						setDate(rs.getString("fecha_fin"), cbxFinDia, cbxFinMes, cbxFinAño);
 					}else{
-						System.out.println("This should NOT happen...");
 					}
 					rs.close();
 					conexionDB.desconectarBD();
@@ -535,8 +531,6 @@ public class Proyecto extends javax.swing.JFrame {
 					
 					String query = "update proyectos set estado = 'Cancelado' where id_proyecto = " + projID;
 					
-					System.out.println(query);
-					
 					stmt.executeUpdate(query);
 					cbxEstado.setSelectedItem("Cancelado");
 					populateList();
@@ -554,8 +548,6 @@ public class Proyecto extends javax.swing.JFrame {
 						Statement stmt = conexionDB.statement();
 						
 						String query = "update proyectos set estado = 'Cancelado' where id_proyecto = " + projID;
-						
-						System.out.println(query);
 						
 						stmt.executeUpdate(query);
 						cbxEstado.setSelectedItem("Cancelado");
@@ -623,7 +615,6 @@ public class Proyecto extends javax.swing.JFrame {
 								edpDescripcion.getText() + "','" +
 								Utils.makeDate(cbxInicioDia, cbxInicioMes, cbxInicioAño) + "','" +
 								Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "','Pendiente')";
-							System.out.println(query);
 							stmt.executeUpdate(query);
 							stmt.close();
 							conexionDB.desconectarBD();
@@ -651,7 +642,6 @@ public class Proyecto extends javax.swing.JFrame {
 							"fecha_fin = '" + Utils.makeDate(cbxFinDia, cbxFinMes, cbxFinAño) + "', " + 
 							"estado = '" + cbxEstado.getSelectedItem().toString() +
 							"' where id_proyecto = " + getCurrentProjectID();
-						System.out.println(query);
 						stmt.execute(query);
 						stmt.close();
 						conexionDB.desconectarBD();
@@ -681,13 +671,11 @@ public class Proyecto extends javax.swing.JFrame {
 	}
 	
 	private void btnCancelActionPerformed(ActionEvent evt) {
-		System.out.println("btnCancel.actionPerformed, event="+evt);
 		frmPrincipal.setVisible(true);
 		this.dispose();
 	}
 	
 	private void btnAdminEventoActionPerformed(ActionEvent evt) {
-		//System.out.println("btnAdminEvento.actionPerformed, event="+evt);
 		String id = getCurrentProjectID();
 		if (!id.equals("0")){
 			this.setVisible(false);
@@ -702,7 +690,6 @@ public class Proyecto extends javax.swing.JFrame {
 	}
 	
 	private void btnAdminTareaActionPerformed(ActionEvent evt) {
-		//System.out.println("btnAdminEvento.actionPerformed, event="+evt);
 		String id = getCurrentProjectID();
 		if (!id.equals("0")){
 			try {

@@ -71,17 +71,10 @@ public class CrearRol extends javax.swing.JFrame {
 			for(i=0;i<cantResults;i++){
 				rs.next();
 				model.addElement(rs.getString("nombre"));
-				//System.out.println(stringArr[i]);
 			}
 			
-			//model.addElement("0-CREAR NUEVO PROYECTO"); 
-			
-			//stmt.close();
-			//conexionBD.desconectarBD();
 			cmbUsuarios.setModel(model);
-			//lstProyectos.setModel(model);
 			cmbUsuarios.setSelectedIndex(0);
-			//lstProyectos.setSelectedIndex(0);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

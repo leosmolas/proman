@@ -299,7 +299,6 @@ public class Grupo extends javax.swing.JFrame {
 			
 			if (result == JOptionPane.YES_OPTION){
 				String queryRol = "delete from rol using rol join usuarios where id_usuario = usuario and grupo = " + getSelectedGroupID() + " and nombre = '" + tblUsuarios.getValueAt(tblUsuarios.getSelectedRow(), 0) + "'";
-				System.out.println(queryRol);
 				
 				try {
 					conexionDB.conectarBD();
@@ -374,7 +373,6 @@ public class Grupo extends javax.swing.JFrame {
 				conexionDB.conectarBD();
 				stmt  = conexionDB.statement();			
 				query = "select distinct id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where ((id_proyecto = proyecto) and (jefe = " + currentUID + ")) or (proyecto is null)";
-				System.out.println(query);
 				rs    = stmt.executeQuery(query);
 				rs.last();
 				cantResults = rs.getRow();
@@ -384,7 +382,6 @@ public class Grupo extends javax.swing.JFrame {
 				for(i = 0; i < cantResults; i++) {
 					rs.next();
 					stringArr[i] = rs.getString("id_grupo") + "-" + rs.getString("nombre");
-					System.out.println("Cargando "+stringArr[i]);
 				}
 				stringArr[i] = "0-CREAR NUEVO GRUPO"; 
 				lstGrupos.setModel(new DefaultComboBoxModel(stringArr));
@@ -448,7 +445,6 @@ public class Grupo extends javax.swing.JFrame {
 				query = "insert into grupos (nombre, descripcion, proyecto) values ('" + txtNombre.getText() + "', '" + edpDescripcion.getText() + "', " + currentProjectID + ")";
 			}
 			
-			System.out.println(query);
 			try {
 				conexionDB.conectarBD();
 				Statement stmt = conexionDB.statement();
@@ -482,10 +478,8 @@ public class Grupo extends javax.swing.JFrame {
 	
 	private void btnCancelActionPerformed(ActionEvent evt) {
 		if (currentProjectID == (-1)){
-			System.out.println("Me voy a main");
 			frmPrincipal.setVisible(true);
 		} else {
-			System.out.println("¬ me voy a main");
 			frmProyecto.setVisible(true);
 		}
 		this.dispose();

@@ -46,14 +46,12 @@ public class Main extends javax.swing.JFrame {
 			
 			String query = "select id_usuario from usuarios where nombre = '" + currentUser + "'";
 			
-			System.out.println(query);
 			ResultSet rs = stmt.executeQuery(query);
 			
 			rs.next();
 			String result = rs.getString("id_usuario");
 			stmt.close();
 			conexionBD.desconectarBD();
-			System.out.println(result);
 			return (result);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

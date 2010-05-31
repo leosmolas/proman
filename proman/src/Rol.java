@@ -89,17 +89,10 @@ public class Rol extends javax.swing.JFrame {
 			for(i=0;i<cantResults;i++){
 				rs.next();
 				model.addElement(rs.getString("nombre"));
-				//System.out.println(stringArr[i]);
 			}
 			
-			//model.addElement("0-CREAR NUEVO PROYECTO"); 
-			
-			//stmt.close();
-			//conexionBD.desconectarBD();
 			lstUsuarios.setModel(model);
-			//lstProyectos.setModel(model);
 			lstUsuarios.setSelectedIndex(0);
-			//lstProyectos.setSelectedIndex(0);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -190,15 +183,12 @@ public class Rol extends javax.swing.JFrame {
 	
 	private void lstUsuariosValueChanged(ListSelectionEvent evt) {
 		try{
-			//System.out.println("lstUsuarios.valueChanged, event="+evt);
-			//TODO add your code for lstUsuarios.valueChanged
 			int i = 0;
 			rs.first();
 			for(i=0;i<lstUsuarios.getSelectedIndex();i++){
 				rs.next();
 			}
 			
-			//System.out.println(rs.getString("descripcion"));
 			edpDescripción.setText(rs.getString("descripcion"));
 		}catch(SQLException e) {
 			e.printStackTrace();		
@@ -207,8 +197,6 @@ public class Rol extends javax.swing.JFrame {
 	}
 	
 	private void thisWindowClosing(WindowEvent evt) {
-		System.out.println("this.windowClosing, event="+evt);
-		//TODO add your code for this.windowClosing
 		close();
 	}
 

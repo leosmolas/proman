@@ -144,12 +144,10 @@ public class login extends javax.swing.JFrame {
 			
 			String query = "select * from usuarios where nombre = '" + txtUsuario.getText() + "' and password = '" + txtContraseña.getText() + "'";
 			
-			System.out.println(query);
 	        try {
 				ResultSet rs = stmt.executeQuery(query);
 		        //si el usuario existe y el password matchea
 		        if (rs.next()){
-		        	System.out.println("Usuario logeado");
 		        	mainFrm.setCurrentUser(txtUsuario.getText());
 		        	mainFrm.setVisible(true);
 		        	this.dispose();
@@ -171,7 +169,6 @@ public class login extends javax.swing.JFrame {
 	}
 	
 	private void btnCancelarActionPerformed(ActionEvent evt) {
-		System.out.println("btnCancelar.actionPerformed, event="+evt);
 		this.dispose();
 	}
 	
