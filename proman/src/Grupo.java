@@ -292,37 +292,44 @@ public class Grupo extends javax.swing.JFrame {
 	}
 	
 	private void btnEliminarActionPerformed(ActionEvent evt) {
-		int result = JOptionPane.showConfirmDialog(this, "Está seguro de que desea eliminar el usuario del grupo?", "Project Manager - Eliminar Rol", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-		
-		if (result == JOptionPane.YES_OPTION){
-			String queryRol = "delete from rol using rol join usuarios where id_usuario = usuario and grupo = " + getSelectedGroupID() + " and nombre = '" + tblUsuarios.getValueAt(tblUsuarios.getSelectedRow(), 0) + "'";
-			System.out.println(queryRol);
+		if (tblUsuarios.getRowCount() == 0){
+			JOptionPane.showMessageDialog(this, "El grupo seleccionado no tiene ningun usuario", "¡Advertencia!", JOptionPane.WARNING_MESSAGE);
+		}else{
+			int result = JOptionPane.showConfirmDialog(this, "Está seguro de que desea eliminar el usuario del grupo?", "Project Manager - Eliminar Rol", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			
-			try {
-				conexionDB.conectarBD();
-				Statement stmt = conexionDB.statement();
+			if (result == JOptionPane.YES_OPTION){
+				String queryRol = "delete from rol using rol join usuarios where id_usuario = usuario and grupo = " + getSelectedGroupID() + " and nombre = '" + tblUsuarios.getValueAt(tblUsuarios.getSelectedRow(), 0) + "'";
+				System.out.println(queryRol);
 				
-				stmt.execute(queryRol);
-			
-				stmt.close();
-				conexionDB.desconectarBD();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
+					
+					stmt.execute(queryRol);
+				
+					stmt.close();
+					conexionDB.desconectarBD();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				lstGruposValueChanged(null);
 			}
-			
-			lstGruposValueChanged(null);
 		}
 	}
 	
 	private void btnEditarRolActionPerformed(ActionEvent evt) {
-		@SuppressWarnings("unused")
-		Rol frmRol;
-		String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
-		String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));		
-		frmRol = new Rol(this, conexionDB, Integer.parseInt(idGrupo));
-		frmRol.setVisible(true);
-		this.setVisible(false);
+		if (tblUsuarios.getRowCount() == 0){
+			JOptionPane.showMessageDialog(this, "El grupo seleccionado no tiene ningun usuario", "¡Advertencia!", JOptionPane.WARNING_MESSAGE);
+		}else{
+			Rol frmRol;
+			String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
+			String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));		
+			frmRol = new Rol(this, conexionDB, Integer.parseInt(idGrupo));
+			frmRol.setVisible(true);
+			this.setVisible(false);
+		}
 	}
 	
 	
