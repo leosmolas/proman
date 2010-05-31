@@ -5,9 +5,6 @@ import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -477,11 +474,8 @@ public class Proyecto extends javax.swing.JFrame {
 				txtNombre.setText("Nuevo proyecto");
 				edpDescripcion.setText("");
 				cbxEstado.setEnabled(false);
-				Date date = Calendar.getInstance().getTime();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				String currentDate = sdf.format(date);
-				setDate(currentDate, cbxInicioDia, cbxInicioMes, cbxInicioAño);
-				setDate(currentDate, cbxFinDia, cbxFinMes, cbxFinAño);
+				setDate(Utils.getCurrentDate(), cbxInicioDia, cbxInicioMes, cbxInicioAño);
+				setDate(Utils.getCurrentDate(), cbxFinDia, cbxFinMes, cbxFinAño);
 			} else {
 				setUserControls(permitido, editable);
 				//seleccionó un proyecto ya existente
@@ -616,9 +610,7 @@ public class Proyecto extends javax.swing.JFrame {
 			if (getCurrentProjectID().equals("0")){
 				//Caso de uso CREAR PROYECTO
 				try {					
-					Date date = Calendar.getInstance().getTime();
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String currentDate = sdf.format(date);
+					String currentDate = Utils.getCurrentDate();
 					if (currentDate.compareTo(Utils.makeDate(cbxInicioDia,cbxInicioMes,cbxInicioAño)) <= 0){
 						int opt = JOptionPane.showConfirmDialog(this, "Está seguro de que desea crear un proyecto nuevo?", "Project Manager - Crear Proyecto", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 						if (opt == JOptionPane.YES_OPTION){

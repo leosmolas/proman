@@ -86,7 +86,7 @@ public class Evento extends javax.swing.JFrame {
 			inicioProy = rs.getString("fecha_inicio");
 			finProy = rs.getString("fecha_fin");
 			stmt.close();
-			conexionDB.desconectarBD();			
+			conexionDB.desconectarBD();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -389,6 +389,7 @@ public class Evento extends javax.swing.JFrame {
 		cbxFechaAño.setSelectedIndex(0);	
 		cbxHora.setSelectedIndex(12);
 		cbxMin.setSelectedIndex(0);
+		Utils.setDate(Utils.getCurrentDate(), cbxFechaDia, cbxFechaMes, cbxFechaAño);
 	}
 
 	private String getCurrentEventtID() {
