@@ -63,7 +63,7 @@ public class Rol extends javax.swing.JFrame {
 	public Rol(Grupo parent, Conexion conexion, int idGrupo) {
 		super();
 		initGUI();
-		conexionBD = new Conexion("root", "");
+		conexionBD = conexion;
 		frmGrupo = parent;
 		this.idGrupo = idGrupo;
 		//frmGrupo.SetVisible(false);
