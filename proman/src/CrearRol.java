@@ -1,7 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
@@ -13,10 +12,10 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
+
 
 import javax.swing.WindowConstants;
-import javax.swing.SwingUtilities;
+
 
 
 /**
@@ -95,7 +94,7 @@ public class CrearRol extends javax.swing.JFrame {
 		try {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			getContentPane().setLayout(null);
-			this.setPreferredSize(new java.awt.Dimension(259, 240));
+			this.setPreferredSize(new java.awt.Dimension(251, 232));
 			this.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent evt) {
 					thisWindowClosing(evt);
@@ -109,17 +108,20 @@ public class CrearRol extends javax.swing.JFrame {
 				getContentPane().add(cmbUsuarios);
 				cmbUsuarios.setModel(cmbUsuariosModel);
 				cmbUsuarios.setBounds(12, 12, 219, 23);
+				cmbUsuarios.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				edpDescripcion = new JEditorPane();
 				getContentPane().add(edpDescripcion);
 				edpDescripcion.setBounds(12, 47, 219, 108);
+				edpDescripcion.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				btnOk = new JButton();
 				getContentPane().add(btnOk);
 				btnOk.setText("Guardar");
 				btnOk.setBounds(12, 167, 81, 23);
+				btnOk.setFont(new java.awt.Font("Arial",0,10));
 				btnOk.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						btnOkActionPerformed(evt);
@@ -131,6 +133,7 @@ public class CrearRol extends javax.swing.JFrame {
 				getContentPane().add(btnCancel);
 				btnCancel.setText("Volver");
 				btnCancel.setBounds(144, 167, 87, 23);
+				btnCancel.setFont(new java.awt.Font("Arial",0,10));
 				btnCancel.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						btnCancelActionPerformed(evt);
@@ -138,7 +141,7 @@ public class CrearRol extends javax.swing.JFrame {
 				});
 			}
 			pack();
-			this.setSize(259, 240);
+			this.setSize(251, 232);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

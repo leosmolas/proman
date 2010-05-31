@@ -127,6 +127,7 @@ public class Grupo extends javax.swing.JFrame {
 				txtID.setBounds(92, 12, 132, 21);
 				txtID.setFont(new java.awt.Font("Arial",0,10));
 				txtID.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				txtID.setEditable(false);
 			}
 			{
 
@@ -158,17 +159,11 @@ public class Grupo extends javax.swing.JFrame {
 				lblNombre.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
-				txtID = new JTextField();
-				getContentPane().add(txtID);
-				txtID.setBounds(92, 12, 132, 21);
-				txtID.setFont(new java.awt.Font("Arial",0,10));
-				txtID.setEditable(false);
-			}
-			{
 				txtNombre = new JTextField();
 				getContentPane().add(txtNombre);
 				txtNombre.setBounds(92, 38, 132, 21);
 				txtNombre.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				txtNombre.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				edpDescripcion = new JEditorPane();
@@ -257,6 +252,7 @@ public class Grupo extends javax.swing.JFrame {
 				tblUsuarios.setModel(tblUsuariosModel);
 				tblUsuarios.setBounds(12, 159, 263, 137);
 				tblUsuarios.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				tblUsuarios.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				ListModel lstGruposModel = 
