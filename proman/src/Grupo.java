@@ -287,6 +287,11 @@ public class Grupo extends javax.swing.JFrame {
 	}
 	
 	private void btnAgregarActionPerformed(ActionEvent evt) {
+		String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
+		String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));	
+		CrearRol crearRol = new CrearRol(this, conexionDB, Integer.parseInt(idGrupo));
+		crearRol.setVisible(true);
+		this.setVisible(false);
 	}
 	
 	private void btnEliminarActionPerformed(ActionEvent evt) {
@@ -316,7 +321,11 @@ public class Grupo extends javax.swing.JFrame {
 	private void btnEditarRolActionPerformed(ActionEvent evt) {
 		@SuppressWarnings("unused")
 		Rol frmRol;
-		frmRol = new Rol();
+		String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
+		String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));		
+		frmRol = new Rol(this, conexionDB, Integer.parseInt(idGrupo));
+		frmRol.setVisible(true);
+		this.setVisible(false);
 	}
 	
 	

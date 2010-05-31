@@ -11,6 +11,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 
 import javax.swing.WindowConstants;
 import javax.swing.SwingUtilities;
@@ -34,30 +35,16 @@ public class CrearRol extends javax.swing.JFrame {
 	private JButton btnOk;
 	private JEditorPane edpDescripcion;
 	private Conexion conexionBD;
-	private Rol frmRol;
+	private JFrame frame;
 	private ResultSet rs;
 	private int idGrupo;
 	Statement stmt;
 
-	/**
-	* Auto-generated main method to display this JFrame
-	*/
-	public static void main(String[] args) {
-		/*SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				CrearRol inst = new CrearRol(null,null,1);
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});*/
-		Main.main(null);
-	}
-	
-	public CrearRol(Rol parent, Conexion conn, int grupo) {
+	public CrearRol(JFrame parent, Conexion conn, int grupo) {
 		super();
 		initGUI();
 		conexionBD = conn;
-		frmRol = parent;
+		frame = parent;
 		idGrupo = grupo;
 		populateList();
 	}
@@ -184,7 +171,7 @@ public class CrearRol extends javax.swing.JFrame {
 		try{
 			stmt.close();
 			conexionBD.desconectarBD();
-			frmRol.setVisible(true);
+			frame.setVisible(true);
 			this.dispose();
 		}catch(SQLException e) {
 			e.printStackTrace();		
