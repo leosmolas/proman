@@ -163,6 +163,7 @@ public class Grupo extends javax.swing.JFrame {
 				getContentPane().add(txtNombre);
 				txtNombre.setBounds(92, 38, 132, 21);
 				txtNombre.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				txtNombre.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				edpDescripcion = new JEditorPane();
@@ -251,6 +252,7 @@ public class Grupo extends javax.swing.JFrame {
 				tblUsuarios.setModel(tblUsuariosModel);
 				tblUsuarios.setBounds(12, 159, 263, 137);
 				tblUsuarios.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				tblUsuarios.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				ListModel lstGruposModel = 
