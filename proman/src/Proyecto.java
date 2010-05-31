@@ -706,6 +706,11 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			btnAdminGrupo.setText("Administrar Grupos");
 			btnAdminGrupo.setBounds(500, 90, 155, 21);
 			btnAdminGrupo.setFont(new java.awt.Font("Tahoma",0,10));
+			btnAdminGrupo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					btnAdminGrupoActionPerformed(evt);
+				}
+			});
 		}
 		return btnAdminGrupo;
 	}
@@ -727,6 +732,10 @@ setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			txtJefe.setBounds(98, 41, 132, 21);
 		}
 		return txtJefe;
+	}
+	
+	private void btnAdminGrupoActionPerformed(ActionEvent evt) {
+
 	}
 
 }
