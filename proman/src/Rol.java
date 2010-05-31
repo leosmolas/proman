@@ -127,6 +127,7 @@ public class Rol extends javax.swing.JFrame {
 				lstUsuarios.setModel(lstUsuariosModel);
 				lstUsuarios.setBounds(12, 32, 130, 153);
 				lstUsuarios.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				lstUsuarios.setFont(new java.awt.Font("Arial",0,10));
 				lstUsuarios.addListSelectionListener(new ListSelectionListener() {
 					public void valueChanged(ListSelectionEvent evt) {
 						lstUsuariosValueChanged(evt);
@@ -152,6 +153,7 @@ public class Rol extends javax.swing.JFrame {
 				getContentPane().add(edpDescripción);
 				edpDescripción.setBounds(165, 32, 215, 153);
 				edpDescripción.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				edpDescripción.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				btnOk = new JButton();

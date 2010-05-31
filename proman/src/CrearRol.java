@@ -103,17 +103,20 @@ public class CrearRol extends javax.swing.JFrame {
 				getContentPane().add(cmbUsuarios);
 				cmbUsuarios.setModel(cmbUsuariosModel);
 				cmbUsuarios.setBounds(12, 12, 219, 23);
+				cmbUsuarios.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				edpDescripcion = new JEditorPane();
 				getContentPane().add(edpDescripcion);
 				edpDescripcion.setBounds(12, 47, 219, 108);
+				edpDescripcion.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				btnOk = new JButton();
 				getContentPane().add(btnOk);
 				btnOk.setText("Guardar");
 				btnOk.setBounds(12, 167, 81, 23);
+				btnOk.setFont(new java.awt.Font("Arial",0,10));
 				btnOk.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent evt) {
 						btnOkMouseClicked(evt);
@@ -125,6 +128,7 @@ public class CrearRol extends javax.swing.JFrame {
 				getContentPane().add(btnCancel);
 				btnCancel.setText("Volver");
 				btnCancel.setBounds(144, 167, 87, 23);
+				btnCancel.setFont(new java.awt.Font("Arial",0,10));
 				btnCancel.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent evt) {
 						btnCancelMouseClicked(evt);

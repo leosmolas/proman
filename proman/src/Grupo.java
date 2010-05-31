@@ -168,6 +168,7 @@ public class Grupo extends javax.swing.JFrame {
 				txtNombre = new JTextField();
 				getContentPane().add(txtNombre);
 				txtNombre.setBounds(92, 38, 132, 21);
+				txtNombre.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
 			{
 				edpDescripcion = new JEditorPane();
