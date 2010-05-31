@@ -290,8 +290,8 @@ public class Grupo extends javax.swing.JFrame {
 	}
 	
 	private void btnEliminarActionPerformed(ActionEvent evt) {
-		if (tblUsuarios.getRowCount() == 0){
-			JOptionPane.showMessageDialog(this, "El grupo seleccionado no tiene ningun usuario", "¡Advertencia!", JOptionPane.WARNING_MESSAGE);
+		if (tblUsuarios.getSelectedRowCount() == 0){
+			JOptionPane.showMessageDialog(this, "El grupo seleccionado no tiene ningun usuario o no ha seleccionado ninguno", "¡Advertencia!", JOptionPane.WARNING_MESSAGE);
 		}else{
 			int result = JOptionPane.showConfirmDialog(this, "Está seguro de que desea eliminar el usuario del grupo?", "Project Manager - Eliminar Rol", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			
@@ -318,7 +318,7 @@ public class Grupo extends javax.swing.JFrame {
 	}
 	
 	private void btnEditarRolActionPerformed(ActionEvent evt) {
-		if (tblUsuarios.getRowCount() == 0){
+		if (tblUsuarios.getSelectedRowCount() == 0){
 			JOptionPane.showMessageDialog(this, "El grupo seleccionado no tiene ningun usuario", "¡Advertencia!", JOptionPane.WARNING_MESSAGE);
 		}else{
 			Rol frmRol;
