@@ -779,7 +779,7 @@ public class Proyecto extends javax.swing.JFrame {
 	
 	private void btnAdminGrupoActionPerformed(ActionEvent evt) {
 		String projID = getCurrentProjectID();
-		Grupo frmGrupo = new Grupo(frmPrincipal, this, conexionDB, projID);
+		Grupo frmGrupo = new Grupo(frmPrincipal, this, conexionDB, projID,getCurrentProjectName());
 		this.setVisible(false);
 		frmGrupo.setVisible(true);
 	}

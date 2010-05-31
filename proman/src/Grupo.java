@@ -85,10 +85,10 @@ public class Grupo extends javax.swing.JFrame {
 		populateList();
 	}
 	
-	public Grupo(Main mainFrame, Proyecto parent, Conexion dbConnection, String proyectID) {
+	public Grupo(Main mainFrame, Proyecto parent, Conexion dbConnection, String proyectID, String projectName) {
 		super();
 		initGUI();
-		
+		this.setTitle(this.getTitle()+" del proyecto "+projectName);
 		currentProjectID = Integer.parseInt(proyectID);
 		conexionDB   = dbConnection;
 		frmPrincipal = mainFrame;
@@ -105,7 +105,7 @@ public class Grupo extends javax.swing.JFrame {
 	private void initGUI() {
 		try {
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			this.setTitle("Proyect Manager: Grupo");
+			this.setTitle("Proyect Manager: Grupos");
 			getContentPane().setLayout(null);
 			this.setPreferredSize(new java.awt.Dimension(560, 371));
 			this.addWindowListener(new WindowAdapter() {
