@@ -1,3 +1,5 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -159,9 +161,9 @@ public class Rol extends javax.swing.JFrame {
 				btnOk.setText("Guardar");
 				btnOk.setBounds(210, 197, 81, 21);
 				btnOk.setFont(new java.awt.Font("Arial",0,10));
-				btnOk.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent evt) {
-						btnOkMouseClicked(evt);
+				btnOk.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnOkActionPerformed(evt);
 					}
 				});
 			}
@@ -171,9 +173,9 @@ public class Rol extends javax.swing.JFrame {
 				btnCancel.setText("Volver");
 				btnCancel.setBounds(303, 197, 77, 21);
 				btnCancel.setFont(new java.awt.Font("Arial",0,10));
-				btnCancel.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent evt) {
-						btnCancelMouseClicked(evt);
+				btnCancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnCancelActionPerformed(evt);
 					}
 				});
 			}
@@ -202,29 +204,6 @@ public class Rol extends javax.swing.JFrame {
 		}
 	}
 	
-	private void btnCancelMouseClicked(MouseEvent evt) {
-		//System.out.println("btnCancel.mouseClicked, event="+evt);
-		//TODO add your code for btnCancel.mouseClicked
-		close();
-	
-	}
-	
-	private void btnOkMouseClicked(MouseEvent evt) {
-		//System.out.println("btnOk.mouseClicked, event="+evt);
-		//TODO add your code for btnOk.mouseClicked
-		try {
-			String query = "update rol set descripcion = '" + edpDescripción.getText() + "' where usuario = " + rs.getString("id_usuario") + " and grupo = " + idGrupo;
-			
-			//System.out.println(query);
-			
-			stmt.executeUpdate(query);
-		}catch(SQLException e) {
-			e.printStackTrace();		
-			
-		}
-		populateList();
-	}
-	
 	private void thisWindowClosing(WindowEvent evt) {
 		System.out.println("this.windowClosing, event="+evt);
 		//TODO add your code for this.windowClosing
@@ -236,6 +215,7 @@ public class Rol extends javax.swing.JFrame {
 			stmt.close();
 			conexionBD.desconectarBD();
 			frmGrupo.setVisible(true);
+			frmGrupo.refreshRoles();
 			this.dispose();
 		}catch(SQLException e) {
 			e.printStackTrace();		
@@ -243,4 +223,19 @@ public class Rol extends javax.swing.JFrame {
 		}	
 	}
 	
+	private void btnOkActionPerformed(ActionEvent evt) {
+		try {
+			String query = "update rol set descripcion = '" + edpDescripción.getText() + "' where usuario = " + rs.getString("id_usuario") + " and grupo = " + idGrupo;
+			stmt.executeUpdate(query);
+		}catch(SQLException e) {
+			e.printStackTrace();		
+			
+		}
+		populateList();
+	}
+	
+	private void btnCancelActionPerformed(ActionEvent evt) {
+		close();
+	}
+
 }

@@ -428,6 +428,10 @@ public class Grupo extends javax.swing.JFrame {
 		
 	}
 	
+	public void refreshRoles(){
+		lstGruposValueChanged(null);
+	}
+	
 	private void btnGuardarGrupoActionPerformed(ActionEvent evt) {
 		String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
 		String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));
