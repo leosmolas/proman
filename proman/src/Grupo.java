@@ -62,23 +62,12 @@ public class Grupo extends javax.swing.JFrame {
 	private JButton btnEliminarGrupo;
 	private JTextField txtID;
 	private JLabel lblDescripcion;
+
 	private Conexion conexionDB;
 	private Main frmPrincipal;
 	private int currentProjectID;
 	private Proyecto frmProyecto;
 	
-	/**
-	* Auto-generated main method to display this JFrame
-	*/
-//	public static void main(String[] args) {
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				Grupo inst = new Grupo();
-//				inst.setLocationRelativeTo(null);
-//				inst.setVisible(true);
-//			}
-//		});
-//	}
 	
 	public Grupo(Main parent, Conexion dbConnection) {
 		super();
@@ -192,6 +181,15 @@ public class Grupo extends javax.swing.JFrame {
 				lblDescripcion.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
+
+				txtID = new JTextField();
+				getContentPane().add(txtID);
+				txtID.setBounds(92, 12, 132, 21);
+				txtID.setFont(new java.awt.Font("Arial",0,10));
+				txtID.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+			}
+			{
+
 				lblID = new JLabel();
 				getContentPane().add(lblID);
 				lblID.setText("ID");
@@ -403,6 +401,7 @@ public class Grupo extends javax.swing.JFrame {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 		}
 	}
 	
@@ -469,7 +468,6 @@ public class Grupo extends javax.swing.JFrame {
 				e.printStackTrace();
 			}
 		}
-
 	}
 	
 	private void thisWindowClosing(WindowEvent evt) {
