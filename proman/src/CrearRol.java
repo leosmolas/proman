@@ -1,3 +1,5 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -35,16 +37,20 @@ public class CrearRol extends javax.swing.JFrame {
 	private JButton btnOk;
 	private JEditorPane edpDescripcion;
 	private Conexion conexionBD;
-	private JFrame frame;
+
+	private Grupo frmGrupo;
+
 	private ResultSet rs;
 	private int idGrupo;
 	Statement stmt;
 
-	public CrearRol(JFrame parent, Conexion conn, int grupo) {
+
+	public CrearRol(Grupo parent, Conexion conn, int grupo) {
 		super();
 		initGUI();
 		conexionBD = conn;
-		frame = parent;
+		frmGrupo = parent;
+
 		idGrupo = grupo;
 		populateList();
 	}
@@ -81,7 +87,7 @@ public class CrearRol extends javax.swing.JFrame {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+	
 	}
 	
 	
@@ -103,23 +109,20 @@ public class CrearRol extends javax.swing.JFrame {
 				getContentPane().add(cmbUsuarios);
 				cmbUsuarios.setModel(cmbUsuariosModel);
 				cmbUsuarios.setBounds(12, 12, 219, 23);
-				cmbUsuarios.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				edpDescripcion = new JEditorPane();
 				getContentPane().add(edpDescripcion);
 				edpDescripcion.setBounds(12, 47, 219, 108);
-				edpDescripcion.setFont(new java.awt.Font("Arial",0,10));
 			}
 			{
 				btnOk = new JButton();
 				getContentPane().add(btnOk);
 				btnOk.setText("Guardar");
 				btnOk.setBounds(12, 167, 81, 23);
-				btnOk.setFont(new java.awt.Font("Arial",0,10));
-				btnOk.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent evt) {
-						btnOkMouseClicked(evt);
+				btnOk.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnOkActionPerformed(evt);
 					}
 				});
 			}
@@ -128,10 +131,9 @@ public class CrearRol extends javax.swing.JFrame {
 				getContentPane().add(btnCancel);
 				btnCancel.setText("Volver");
 				btnCancel.setBounds(144, 167, 87, 23);
-				btnCancel.setFont(new java.awt.Font("Arial",0,10));
-				btnCancel.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent evt) {
-						btnCancelMouseClicked(evt);
+				btnCancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnCancelActionPerformed(evt);
 					}
 				});
 			}
@@ -141,10 +143,27 @@ public class CrearRol extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 	}
+
+	private void close(){
+		try{
+			stmt.close();
+			conexionBD.desconectarBD();
+			frmGrupo.setVisible(true);
+			frmGrupo.refreshRoles();
+			this.dispose();
+		}catch(SQLException e) {
+			e.printStackTrace();		
+			
+		}	
+	}
 	
-	private void btnOkMouseClicked(MouseEvent evt) {
-		//System.out.println("btnOk.mouseClicked, event="+evt);
-		//TODO add your code for btnOk.mouseClicked
+	private void thisWindowClosing(WindowEvent evt) {
+		//System.out.println("this.windowClosing, event="+evt);
+		//TODO add your code for this.windowClosing
+		close();
+	}
+	
+	private void btnOkActionPerformed(ActionEvent evt) {
 		try{
 			int i = 0;
 			rs.first();
@@ -162,30 +181,13 @@ public class CrearRol extends javax.swing.JFrame {
 		}catch(SQLException e) {
 			e.printStackTrace();		
 			
-		}	
+		}
 	}
 	
-	private void btnCancelMouseClicked(MouseEvent evt) {
-		//System.out.println("btnCancel.mouseClicked, event="+evt);
-		//TODO add your code for btnCancel.mouseClicked
+	private void btnCancelActionPerformed(ActionEvent evt) {
 		close();
 	}
 
-	private void close(){
-		try{
-			stmt.close();
-			conexionBD.desconectarBD();
-			frame.setVisible(true);
-			this.dispose();
-		}catch(SQLException e) {
-			e.printStackTrace();		
-			
-		}	
-	}
-	
-	private void thisWindowClosing(WindowEvent evt) {
-		//System.out.println("this.windowClosing, event="+evt);
-		//TODO add your code for this.windowClosing
-		//close();
-	}
+
+
 }
