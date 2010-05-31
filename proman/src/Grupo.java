@@ -64,6 +64,7 @@ public class Grupo extends javax.swing.JFrame {
 	private JLabel lblDescripcion;
 	private Conexion conexionDB;
 	private Main frmPrincipal;
+	private int currentProjectID;
 	
 	/**
 	* Auto-generated main method to display this JFrame
@@ -82,6 +83,7 @@ public class Grupo extends javax.swing.JFrame {
 		super();
 		initGUI();
 		
+		currentProjectID = -1;
 		Statement stmt;
 		String    query, currentUID;
 		ResultSet rs;
@@ -100,7 +102,8 @@ public class Grupo extends javax.swing.JFrame {
 			conexionDB.conectarBD();			
 			System.out.println("im still in");
 			stmt  = conexionDB.statement();			
-			query = "select id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where id_proyecto = proyecto and jefe = " + currentUID;
+			query = "select distinct id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where ((id_proyecto = proyecto) and (jefe = " + currentUID + ")) or (proyecto is null)";
+			System.out.println(query);
 			rs    = stmt.executeQuery(query);
 			rs.last();
 			cantResults = rs.getRow();
@@ -133,6 +136,7 @@ public class Grupo extends javax.swing.JFrame {
 		String[]  stringArr;
 		int cantResults, i; 
 		
+		currentProjectID = Integer.parseInt(proyectID);
 		conexionDB   = dbConnection;
 		frmPrincipal = parent;
 		
@@ -141,9 +145,10 @@ public class Grupo extends javax.swing.JFrame {
 		 * tiene que mostrar los grupos asociados al proyecto seleccionado en la pantalla de proyecto
 		 * */
 		try {
+			String currentUID = parent.getCurrentUserID();
 			conexionDB.conectarBD();			
 			stmt  = conexionDB.statement();			
-			query = "select id_grupo, descripcion from grupos where proyecto = " + proyectID;
+			query = "select distinct id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where ((id_proyecto = proyecto) and (jefe = " + currentUID + ")) and proyecto = " + proyectID;
 			rs    = stmt.executeQuery(query);
 			rs.last();
 			cantResults = rs.getRow();
@@ -348,6 +353,10 @@ public class Grupo extends javax.swing.JFrame {
 	private void btnEliminarGrupoActionPerformed(ActionEvent evt) {
 	}
 	
+	private void populateList(){
+		
+	}
+	
 	private void btnGuardarGrupoActionPerformed(ActionEvent evt) {
 		String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
 		String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));
@@ -355,9 +364,42 @@ public class Grupo extends javax.swing.JFrame {
 		
 		if(idGrupo.equals("0")){
 			//alta
-			String query = "insert on grupos (nombre, descripcion, proyecto) values ";
+			String query;
+			if(currentProjectID == (-1)){
+				query = "insert into grupos (nombre, descripcion) values ('" + txtNombre.getText() + "', '" + edpDescripcion.getText() + "')";
+			} else {
+				query = "insert into grupos (nombre, descripcion) values ('" + txtNombre.getText() + "', '" + edpDescripcion.getText() + "', " + currentProjectID + ")";
+			}
+			
+			System.out.println(query);
+			try {
+				conexionDB.conectarBD();
+				Statement stmt = conexionDB.statement();
+				
+				stmt.execute(query);
+				
+				stmt.close();
+				conexionDB.desconectarBD();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		} else {
 			//modificación
+			String query = "update grupos set nombre = '" + txtNombre.getText() + "', descripcion = '" + edpDescripcion.getText() + "' where id_grupo = " + idGrupo;
+			try {
+				conexionDB.conectarBD();
+				Statement stmt = conexionDB.statement();
+				
+				stmt.execute(query);
+				
+				stmt.close();
+				conexionDB.desconectarBD();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
