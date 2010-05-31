@@ -13,7 +13,7 @@ create table usuarios (
     password   varchar(45)  not null,
 	email      varchar(45),
 		
-	primary key (id_usuario)
+	primary key (id_usuario, nombre)
 
 ) ENGINE=innoDB;
 

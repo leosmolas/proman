@@ -20,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
@@ -74,11 +75,6 @@ public class Grupo extends javax.swing.JFrame {
 		initGUI();
 		
 		currentProjectID = -1;
-		Statement stmt;
-		String    query, currentUID;
-		ResultSet rs;
-		String[]  stringArr;
-		int cantResults, i; 
 		
 		conexionDB   = dbConnection;
 		frmPrincipal = parent;
@@ -86,45 +82,12 @@ public class Grupo extends javax.swing.JFrame {
 		 * si fue llamado desde la pantalla main,
 		 * tiene que mostrar los grupos asociados a los proyectos de los cuales el usuario es jefe
 		 */
-		try {
-			currentUID = parent.getCurrentUserID();
-			System.out.println("im in");
-			conexionDB.conectarBD();			
-			System.out.println("im still in");
-			stmt  = conexionDB.statement();			
-			query = "select distinct id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where ((id_proyecto = proyecto) and (jefe = " + currentUID + ")) or (proyecto is null)";
-			System.out.println(query);
-			rs    = stmt.executeQuery(query);
-			rs.last();
-			cantResults = rs.getRow();
-			rs.beforeFirst();
-			i = 0;
-			stringArr = new String[cantResults + 1];
-			for(i = 0; i < cantResults; i++) {
-				rs.next();
-				stringArr[i] = rs.getString("id_grupo") + "-" + rs.getString("nombre");
-				System.out.println("Cargando "+stringArr[i]);
-			}
-			stringArr[i] = "0-CREAR NUEVO GRUPO"; 
-			lstGrupos.setModel(new DefaultComboBoxModel(stringArr));
-			lstGrupos.setSelectedIndex(0);
-			stmt.close();
-			conexionDB.desconectarBD();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lstGrupos.setSelectedIndex(0);
+		populateList();
 	}
 	
 	public Grupo(Main mainFrame, Proyecto parent, Conexion dbConnection, String proyectID) {
 		super();
 		initGUI();
-
-		Statement stmt;
-		String    query;
-		ResultSet rs;
-		String[]  stringArr;
-		int cantResults, i; 
 		
 		currentProjectID = Integer.parseInt(proyectID);
 		conexionDB   = dbConnection;
@@ -136,30 +99,7 @@ public class Grupo extends javax.swing.JFrame {
 		 * si fue llamado desde la pantalla de proyecto
 		 * tiene que mostrar los grupos asociados al proyecto seleccionado en la pantalla de proyecto
 		 * */
-		try {
-			String currentUID = mainFrame.getCurrentUserID();
-			conexionDB.conectarBD();			
-			stmt  = conexionDB.statement();			
-			query = "select distinct id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where ((id_proyecto = proyecto) and (jefe = " + currentUID + ")) and proyecto = " + proyectID;
-			rs    = stmt.executeQuery(query);
-			rs.last();
-			cantResults = rs.getRow();
-			rs.beforeFirst();
-			i = 0;
-			stringArr = new String[cantResults + 1];
-			for(i = 0; i < cantResults; i++) {
-				rs.next();
-				stringArr[i] = rs.getString("id_grupo") + "-" + rs.getString("nombre");
-			}
-			stringArr[i] = "0-CREAR NUEVO GRUPO"; 
-			lstGrupos.setModel(new DefaultComboBoxModel(stringArr));
-			lstGrupos.setSelectedIndex(0);
-			stmt.close();
-			conexionDB.desconectarBD();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lstGrupos.setSelectedIndex(0);
+		populateList();
 	}
 	
 	private void initGUI() {
@@ -339,10 +279,38 @@ public class Grupo extends javax.swing.JFrame {
 		}
 	}
 	
+	private String getSelectedGroupID(){
+		if (lstGrupos.getSelectedIndex() != -1){
+			String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString(); 
+			return selectedLine.substring(0, selectedLine.indexOf('-'));
+		} else return "-1";
+	}
+	
 	private void btnAgregarActionPerformed(ActionEvent evt) {
 	}
 	
 	private void btnEliminarActionPerformed(ActionEvent evt) {
+		int result = JOptionPane.showConfirmDialog(this, "Está seguro de que desea eliminar el usuario del grupo?", "Project Manager - Eliminar Rol", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if (result == JOptionPane.YES_OPTION){
+			String queryRol = "delete from rol using rol join usuarios where id_usuario = usuario and grupo = " + getSelectedGroupID() + " and nombre = '" + tblUsuarios.getValueAt(tblUsuarios.getSelectedRow(), 0) + "'";
+			System.out.println(queryRol);
+			
+			try {
+				conexionDB.conectarBD();
+				Statement stmt = conexionDB.statement();
+				
+				stmt.execute(queryRol);
+			
+				stmt.close();
+				conexionDB.desconectarBD();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			lstGruposValueChanged(null);
+		}
 	}
 	
 	private void btnEditarRolActionPerformed(ActionEvent evt) {
@@ -351,10 +319,101 @@ public class Grupo extends javax.swing.JFrame {
 		frmRol = new Rol();
 	}
 	
+	
+	
 	private void btnEliminarGrupoActionPerformed(ActionEvent evt) {
+		int result = JOptionPane.showConfirmDialog(this, "Está seguro de que desea eliminar el grupo?", "Project Manager - Eliminar Grupo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if (result == JOptionPane.YES_OPTION){
+			String queryRol = "delete from rol where grupo = " + getSelectedGroupID();
+			String queryTarea = "delete from tareas where grupo = " + getSelectedGroupID();
+			String queryGrupo = "delete from grupos where id_grupo = " + getSelectedGroupID();
+			
+			try {
+				conexionDB.conectarBD();
+				Statement stmt = conexionDB.statement();
+				
+				stmt.execute(queryRol);
+				stmt.execute(queryTarea);
+				stmt.execute(queryGrupo);
+				
+				stmt.close();
+				conexionDB.desconectarBD();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
+			populateList();
+		}
 	}
 	
 	private void populateList(){
+		if (currentProjectID == (-1)){
+			//si vinimos de Main
+			Statement stmt;
+			String    query, currentUID;
+			ResultSet rs;
+			String[]  stringArr;
+			int cantResults, i; 
+			try {
+				currentUID = frmPrincipal.getCurrentUserID();
+				conexionDB.conectarBD();
+				stmt  = conexionDB.statement();			
+				query = "select distinct id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where ((id_proyecto = proyecto) and (jefe = " + currentUID + ")) or (proyecto is null)";
+				System.out.println(query);
+				rs    = stmt.executeQuery(query);
+				rs.last();
+				cantResults = rs.getRow();
+				rs.beforeFirst();
+				i = 0;
+				stringArr = new String[cantResults + 1];
+				for(i = 0; i < cantResults; i++) {
+					rs.next();
+					stringArr[i] = rs.getString("id_grupo") + "-" + rs.getString("nombre");
+					System.out.println("Cargando "+stringArr[i]);
+				}
+				stringArr[i] = "0-CREAR NUEVO GRUPO"; 
+				lstGrupos.setModel(new DefaultComboBoxModel(stringArr));
+				lstGrupos.setSelectedIndex(0);
+				stmt.close();
+				conexionDB.desconectarBD();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			lstGrupos.setSelectedIndex(0);
+		} else {
+			//si vinimos de Proyecto
+			Statement stmt;
+			String    query;
+			ResultSet rs;
+			String[]  stringArr;
+			int cantResults, i; 
+			try {
+				String currentUID = frmPrincipal.getCurrentUserID();
+				conexionDB.conectarBD();			
+				stmt  = conexionDB.statement();			
+				query = "select distinct id_grupo, grupos.descripcion, grupos.nombre from grupos join proyectos where ((id_proyecto = proyecto) and (jefe = " + currentUID + ")) and proyecto = " + currentProjectID;
+				rs    = stmt.executeQuery(query);
+				rs.last();
+				cantResults = rs.getRow();
+				rs.beforeFirst();
+				i = 0;
+				stringArr = new String[cantResults + 1];
+				for(i = 0; i < cantResults; i++) {
+					rs.next();
+					stringArr[i] = rs.getString("id_grupo") + "-" + rs.getString("nombre");
+				}
+				stringArr[i] = "0-CREAR NUEVO GRUPO"; 
+				lstGrupos.setModel(new DefaultComboBoxModel(stringArr));
+				lstGrupos.setSelectedIndex(0);
+				stmt.close();
+				conexionDB.desconectarBD();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			lstGrupos.setSelectedIndex(0);
+		}
 		
 	}
 	
@@ -382,7 +441,6 @@ public class Grupo extends javax.swing.JFrame {
 				stmt.close();
 				conexionDB.desconectarBD();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -398,15 +456,21 @@ public class Grupo extends javax.swing.JFrame {
 				stmt.close();
 				conexionDB.desconectarBD();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 		}
+		populateList();
 	}
 	
 	private void btnCancelActionPerformed(ActionEvent evt) {
-		frmPrincipal.setVisible(true);
+		if (currentProjectID == (-1)){
+			System.out.println("Me voy a main");
+			frmPrincipal.setVisible(true);
+		} else {
+			System.out.println("¬ me voy a main");
+			frmProyecto.setVisible(true);
+		}
 		this.dispose();
 	}
 	
@@ -417,55 +481,55 @@ public class Grupo extends javax.swing.JFrame {
 		btnEliminarGrupo.setEnabled(enable);
 	}
 	
-	private void lstGruposValueChanged(ListSelectionEvent evt) {
-		
-		String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
-		String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));
-		String nombreGrupo = selectedLine.substring(selectedLine.indexOf('-')+1);
-		
-		if (idGrupo.equals("0")){
-			setUserControls(false);
-			edpDescripcion.setText("");
-			txtID.setText("");
-			txtNombre.setText("Nuevo grupo");
-			tblUsuarios.setModel(new uneditableTableModel());
-		} else {
-			setUserControls(true);
-			String query = "select descripcion from grupos where id_grupo = " + idGrupo;
+	private void lstGruposValueChanged(ListSelectionEvent evt) {		
+		if (lstGrupos.getSelectedIndex() != (-1)){
+			String selectedLine = lstGrupos.getModel().getElementAt(lstGrupos.getSelectedIndex()).toString();
+			String idGrupo =  selectedLine.substring(0,selectedLine.indexOf('-'));
+			String nombreGrupo = selectedLine.substring(selectedLine.indexOf('-')+1);
 			
-			try {
-				conexionDB.conectarBD();
-				Statement stmt = conexionDB.statement();
+			if (idGrupo.equals("0")){
+				setUserControls(false);
+				edpDescripcion.setText("");
+				txtID.setText("");
+				txtNombre.setText("Nuevo grupo");
+				tblUsuarios.setModel(new uneditableTableModel());
+			} else {
+				setUserControls(true);
+				String query = "select descripcion from grupos where id_grupo = " + idGrupo;
 				
-				ResultSet rs = stmt.executeQuery(query);
-				
-				if(rs.next()){
-					edpDescripcion.setText(rs.getString("descripcion"));
-					txtID.setText(idGrupo);
-					txtNombre.setText(nombreGrupo);
-					rs.close();
+				try {
+					conexionDB.conectarBD();
+					Statement stmt = conexionDB.statement();
 					
-					String queryUsuarios = "select nombre, descripcion from rol join usuarios where grupo = " + idGrupo + " and usuario = id_usuario";
-					ResultSet rsUsuarios = stmt.executeQuery(queryUsuarios);
+					ResultSet rs = stmt.executeQuery(query);
 					
-					uneditableTableModel tableModel = new uneditableTableModel();
-					tableModel.addColumn("Nombre");
-					tableModel.addColumn("Rol");
-					while (rsUsuarios.next()){
-						String[] rowData = { rsUsuarios.getString("nombre"), rsUsuarios.getString("descripcion") };
-						tableModel.addRow(rowData);
+					if(rs.next()){
+						edpDescripcion.setText(rs.getString("descripcion"));
+						txtID.setText(idGrupo);
+						txtNombre.setText(nombreGrupo);
+						rs.close();
+						
+						String queryUsuarios = "select nombre, descripcion from rol join usuarios where grupo = " + idGrupo + " and usuario = id_usuario";
+						ResultSet rsUsuarios = stmt.executeQuery(queryUsuarios);
+						
+						uneditableTableModel tableModel = new uneditableTableModel();
+						tableModel.addColumn("Nombre");
+						tableModel.addColumn("Rol");
+						while (rsUsuarios.next()){
+							String[] rowData = { rsUsuarios.getString("nombre"), rsUsuarios.getString("descripcion") };
+							tableModel.addRow(rowData);
+						}
+						
+						rsUsuarios.close();
+						
+						tblUsuarios.setModel(tableModel);					
 					}
 					
-					rsUsuarios.close();
+					conexionDB.desconectarBD();
 					
-					tblUsuarios.setModel(tableModel);					
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-				
-				conexionDB.desconectarBD();
-				
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}
@@ -473,7 +537,9 @@ public class Grupo extends javax.swing.JFrame {
 	private void thisWindowClosing(WindowEvent evt) {
 		if (currentProjectID == (-1)){
 			frmPrincipal.setVisible(true);
-		} else frmProyecto.setVisible(true);
+		} else {
+			frmProyecto.setVisible(true);
+		}
 		this.dispose();
 	}
 
