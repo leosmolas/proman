@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 import javax.swing.JButton;
 
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.SwingUtilities;
 
@@ -126,6 +127,11 @@ public class Main extends javax.swing.JFrame {
 				btnCrearReporte.setText("Crear Reporte");
 				btnCrearReporte.setBounds(46, 78, 147, 21);
 				btnCrearReporte.setFont(new java.awt.Font("Arial",0,10));
+				btnCrearReporte.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnCrearReporteActionPerformed(evt);
+					}
+				});
 			}
 			pack();
 		} catch (Exception e) {
@@ -147,6 +153,38 @@ public class Main extends javax.swing.JFrame {
 		Grupo frmGrupo= new Grupo(this, conexionBD);
 		this.setVisible(false);
 		frmGrupo.setVisible(true);
+	}
+	
+	private void btnCrearReporteActionPerformed(ActionEvent evt) {
+		String esAdmin;
+		try {
+			conexionBD.conectarBD();
+			
+			
+			String query = "select esAdmin from usuarios where id_usuario = " + getCurrentUserID() ;
+			
+			System.out.println(query);
+			Statement stmt = conexionBD.statement();
+			
+			ResultSet rs = stmt.executeQuery(query);
+			
+			rs.next();
+			esAdmin = rs.getString("esAdmin");
+			stmt.close();
+			conexionBD.desconectarBD();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return;
+		}
+		if (esAdmin.equals("1")) {
+			Reporte frmReporte = new Reporte(this, conexionBD);
+			this.setVisible(false);
+			frmReporte.setVisible(true);
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "No tiene los permisos para realizar esta tarea.", "¡Cuidado!", JOptionPane.WARNING_MESSAGE);
+		}
+		
 	}
 
 }

@@ -2,6 +2,7 @@ use proyecto;
 
 /* USUARIOS */
 /* 10 Usuarios */
+insert into usuarios (nombre, password, email,esAdmin) values ("admin", "admin", "sarasa", true);
 insert into usuarios (nombre, password, email) values ("1", "1", "sarasa");
 insert into usuarios (nombre, password, email) values ("Nombre1", "Apellido1", "Email1");
 insert into usuarios (nombre, password, email) values ("Nombre2", "Apellido2", "Email2");

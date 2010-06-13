@@ -1,3 +1,5 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -12,10 +14,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.Object;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -35,24 +42,15 @@ public class Reporte extends javax.swing.JFrame {
 	private JButton btnCrearReporte;
 	private JScrollPane jScrollPane1;
 	private JLabel lblEvento;
+	private JFrame parent;
+	private Conexion conexionDB;
 
-	/**
-	* Auto-generated main method to display this JFrame
-	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				Reporte inst = new Reporte();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});
-	}
 	
-	public Reporte() {
+	public Reporte(JFrame parent, Conexion conexion) {
 		super();
 		initGUI();
-		cargarTabla();
+		this.conexionDB = conexion;
+		this.parent = parent;
 	}
 	
 	private void initGUI() {
@@ -106,8 +104,7 @@ public class Reporte extends javax.swing.JFrame {
 			}
 			{
 				ComboBoxModel cbxProyectosModel = 
-					new DefaultComboBoxModel(
-							new String[] { "SAP Librería", "Item Two" });
+					new DefaultComboBoxModel();
 				cbxProyectos = new JComboBox();
 				getContentPane().add(cbxProyectos);
 				cbxProyectos.setModel(cbxProyectosModel);
@@ -120,6 +117,11 @@ public class Reporte extends javax.swing.JFrame {
 				btnCrearReporte.setText("Crear Reporte");
 				btnCrearReporte.setBounds(200, 12, 125, 21);
 				btnCrearReporte.setFont(new java.awt.Font("Arial",0,10));
+				btnCrearReporte.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						btnCrearReporteActionPerformed(evt);
+					}
+				});
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -127,8 +129,53 @@ public class Reporte extends javax.swing.JFrame {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void populateList(){
+		try {
+			conexionDB.conectarBD();			
+			Statement stmt = conexionDB.statement();			
+			String query = "select id_proyecto, nombre from proyectos";
+			
+			ResultSet rs = stmt.executeQuery(query);
+			
+			rs.last();
+			int cantResults = rs.getRow();
+			rs.beforeFirst();
+			int i=0;
+			DefaultComboBoxModel model = new DefaultComboBoxModel();
+			for(i=0;i<cantResults;i++){
+				rs.next();
+				model.addElement(rs.getString("id_proyecto") + "-"+ rs.getString("nombre"));
+				//System.out.println(stringArr[i]);
+			}
+			
+			model.addElement("0-TODOS LOS PROYECTOS"); 
+			
+			stmt.close();
+			conexionDB.desconectarBD();
+			
+			cbxProyectos.setModel(model);
+			
+			cbxProyectos.setSelectedIndex(0);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private String getID(String selectedItem) {
+		return selectedItem.substring(0,selectedItem.indexOf('-'));
+	}
+	
+	private void btnCrearReporteActionPerformed(ActionEvent evt) {
+		System.out.println("btnCrearReporte.actionPerformed, event="+evt);
 		
-
+		crearReporte(getID(cbxProyectos.getSelectedItem().toString()));
 	}
 
+	private void crearReporte(String id) {
+		// TODO Auto-generated method stub
+		cargarTabla();
+	}
 }

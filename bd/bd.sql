@@ -12,6 +12,7 @@ create table usuarios (
 	nombre     varchar(45)  not null,
     password   varchar(45)  not null,
 	email      varchar(45),
+	esAdmin	   boolean default false,
 		
 	primary key (id_usuario, nombre)
 
