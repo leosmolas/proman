@@ -159,9 +159,8 @@ public class Main extends javax.swing.JFrame {
 		String esAdmin;
 		try {
 			conexionBD.conectarBD();
-			
-			
-			String query = "select esAdmin from usuarios where id_usuario = " + getCurrentUserID() ;
+						
+			String query = "select esAdmin from usuarios where nombre = '" + currentUser +"'";
 			
 			System.out.println(query);
 			Statement stmt = conexionBD.statement();

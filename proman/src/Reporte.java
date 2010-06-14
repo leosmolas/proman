@@ -10,8 +10,11 @@ import javax.swing.table.TableModel;
 import javax.swing.SwingUtilities;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.Object;
 import java.sql.ResultSet;
@@ -48,9 +51,11 @@ public class Reporte extends javax.swing.JFrame {
 	
 	public Reporte(JFrame parent, Conexion conexion) {
 		super();
-		initGUI();
 		this.conexionDB = conexion;
 		this.parent = parent;
+		initGUI();
+		populateList();
+		
 	}
 	
 	private void initGUI() {
@@ -66,35 +71,13 @@ public class Reporte extends javax.swing.JFrame {
 				lblEvento.setText("Reporte");
 				lblEvento.setBounds(12, 45, 176, 14);
 			}
-			pack();
-			this.setSize(795, 704);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void cargarTabla(){
-
-		String b;
-		String[][] t = new String[500][];
-		int k=0;
-		
-		BufferedReader in;
-		try {
-			in = new BufferedReader(new FileReader("src/reporte.csv"));
-			while (in.ready()){
-				b = in.readLine();
-				t[k]=b.split(";");
-				k++;
-				
-			}
 			{
 				jScrollPane1 = new JScrollPane();
 				getContentPane().add(jScrollPane1);
 				jScrollPane1.setBounds(12, 71, 763, 591);
 				{
 					TableModel tableEventosModel = 
-						new DefaultTableModel(t,new String[] { "1", "2" ,"3","4","5"});
+						new DefaultTableModel();
 					tableEventos = new JTable();
 					jScrollPane1.setViewportView(tableEventos);
 					tableEventos.setModel(tableEventosModel);
@@ -123,6 +106,30 @@ public class Reporte extends javax.swing.JFrame {
 					}
 				});
 			}
+			pack();
+			this.setSize(795, 704);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void cargarTabla(){
+
+		String b;
+		String[][] t = new String[5000][];
+		int k=0;
+		TableModel tableEventosModel;
+		
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new FileReader("reporte.csv"));
+			while (in.ready()){
+				b = in.readLine();
+				t[k]=b.split(";");
+				k++;
+			}
+			tableEventosModel = new DefaultTableModel(t,new String[] { "1", "2" ,"3","4","5"});
+			tableEventos.setModel(tableEventosModel);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -172,10 +179,111 @@ public class Reporte extends javax.swing.JFrame {
 		System.out.println("btnCrearReporte.actionPerformed, event="+evt);
 		
 		crearReporte(getID(cbxProyectos.getSelectedItem().toString()));
+		cargarTabla();
 	}
 
 	private void crearReporte(String id) {
-		// TODO Auto-generated method stub
-		cargarTabla();
+		try {
+		    BufferedWriter reporte = new BufferedWriter(new FileWriter("reporte.csv"));
+		    if (id.equals("0")) {
+		    	//todos
+		    }
+		    else {
+		    	reporteProyecto(reporte,id);
+		    }
+		    reporte.close();
+		} catch (IOException e) {
+		}
+	}
+
+	private void reporteProyecto(BufferedWriter reporte,String id) throws IOException {
+		reporte.write("Proyecto\n");
+		try {
+			conexionDB.conectarBD();			
+			Statement stmt = conexionDB.statement();			
+			String query = "select * from proyectos where id_proyecto = "+id;
+			
+			ResultSet rs = stmt.executeQuery(query);
+			
+			rs.next();
+			reporte.write("ID;"              + rs.getString("id_proyecto") +"\n");
+			reporte.write("Nombre;"          + rs.getString("nombre") +"\n");
+			reporte.write("Descripcion;"     + rs.getString("descripcion") +"\n");
+			reporte.write("Fecha de Inicio;" + rs.getString("fecha_inicio") +"\n");
+			reporte.write("Fecha de Fin;"    + rs.getString("fecha_fin") +"\n");
+			reporte.write("Estado;"          + rs.getString("estado") +"\n");
+			
+			reporte.write("\n\nTareas\n");
+			reporte.write("ID;Descripción;Fecha de Inicio;Fecha de Fin; Grupo Asignado\n");
+			
+			query = "select * from tareas where proyecto = "+id;
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				reporte.write(rs.getString("id_tarea") + ";");
+				reporte.write(rs.getString("descripcion") + ";");
+				reporte.write(rs.getString("fecha_inicio") + ";");
+				reporte.write(rs.getString("fecha_fin") + ";");
+				reporte.write(rs.getString("grupo") + "\n");
+			}
+			
+			reporte.write("\n\nGrupos\n");
+			reporte.write("ID;Nombre;Descripción\n");
+			
+			query = "select * from grupos where proyecto = "+id;
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				reporte.write(rs.getString("id_grupo") + ";");
+				reporte.write(rs.getString("nombre") + ";");
+				reporte.write(rs.getString("descripcion") + "\n");
+			}
+			
+			reporte.write("\n\nUsuarios\n");
+			reporte.write("ID;Nombre;E-mail\n");
+			
+			query = "select distinct usuarios.id_usuario as id,usuarios.nombre as nombre ,usuarios.email as email from usuarios,grupos,rol where proyecto = " + id + " and id_grupo = grupo and usuario = id_usuario";
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				reporte.write(rs.getString("id") + ";");
+				reporte.write(rs.getString("nombre") + ";");
+				reporte.write(rs.getString("email") + "\n");
+			}
+			
+			reporte.write("\n\nRol\n");
+			reporte.write("Nombre del Usuario;ID del grupo;Descripción\n");
+			
+			query = "select usuarios.nombre as nombre, rol.grupo as id, rol.descripcion as descripcion from usuarios,grupos,rol where proyecto = " + id + " and id_grupo = grupo and usuario = id_usuario";
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				reporte.write(rs.getString("nombre") + ";");
+				reporte.write(rs.getString("id") + ";");
+				reporte.write(rs.getString("descripcion") + "\n");
+			}
+			
+			reporte.write("\n\nEventos\n");
+			reporte.write("ID;Nombre;Descripción;Fecha;Hora de Inicio\n");
+			
+			query = "select * from eventos where proyecto = " + id ;
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				reporte.write(rs.getString("id_evento") + ";");
+				reporte.write(rs.getString("nombre") + ";");
+				reporte.write(rs.getString("descripcion") + ";");
+				reporte.write(rs.getString("fecha") + ";");
+				reporte.write(rs.getString("hora_inicio") + "\n");
+			}
+			
+			reporte.write("\n\n\n\n");
+			
+			stmt.close();
+			conexionDB.desconectarBD();
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
