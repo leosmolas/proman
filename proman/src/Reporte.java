@@ -1,5 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -7,16 +9,16 @@ import javax.swing.JTable;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import javax.swing.SwingUtilities;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.Object;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -64,6 +66,11 @@ public class Reporte extends javax.swing.JFrame {
 			getContentPane().setLayout(null);
 			this.setPreferredSize(new java.awt.Dimension(795, 704));
 			this.setTitle("Proyect Manager: Reporte");
+			this.addWindowListener(new WindowAdapter() {
+				public void windowClosed(WindowEvent evt) {
+					thisWindowClosed(evt);
+				}
+			});
 
 			{
 				lblEvento = new JLabel();
@@ -83,6 +90,7 @@ public class Reporte extends javax.swing.JFrame {
 					tableEventos.setModel(tableEventosModel);
 					tableEventos.setBounds(12, 32, 748, 574);
 					tableEventos.setPreferredSize(new java.awt.Dimension(745, 711));
+					tableEventos.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 				}
 			}
 			{
@@ -186,7 +194,9 @@ public class Reporte extends javax.swing.JFrame {
 		try {
 		    BufferedWriter reporte = new BufferedWriter(new FileWriter("reporte.csv"));
 		    if (id.equals("0")) {
-		    	//todos
+		    	for (int i=0; i< cbxProyectos.getModel().getSize()-1;i++) { 
+		    		reporteProyecto(reporte, getID(cbxProyectos.getModel().getElementAt(i).toString()));
+		    	}
 		    }
 		    else {
 		    	reporteProyecto(reporte,id);
@@ -285,5 +295,9 @@ public class Reporte extends javax.swing.JFrame {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void thisWindowClosed(WindowEvent evt) {
+		parent.setVisible(true);
 	}
 }
