@@ -81,15 +81,14 @@ public class Reporte extends javax.swing.JFrame {
 			{
 				jScrollPane1 = new JScrollPane();
 				getContentPane().add(jScrollPane1);
-				jScrollPane1.setBounds(12, 71, 763, 591);
+				jScrollPane1.setBounds(12, 65, 763, 576);
 				{
 					TableModel tableEventosModel = 
 						new DefaultTableModel();
 					tableEventos = new JTable();
 					jScrollPane1.setViewportView(tableEventos);
 					tableEventos.setModel(tableEventosModel);
-					tableEventos.setBounds(12, 32, 748, 574);
-					tableEventos.setPreferredSize(new java.awt.Dimension(745, 711));
+					tableEventos.setBounds(49, 57, 745, 746);
 					tableEventos.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 				}
 			}
